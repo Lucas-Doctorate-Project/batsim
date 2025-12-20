@@ -1,42 +1,45 @@
-# Carbon Trace CSV Format
+# Environmental Trace CSV Format
 
-This document describes the standard format for carbon trace CSV files used in Batsim for carbon footprint tracking.
+This document describes the standard format for environmental trace CSV files used in Batsim/SimGrid to simulate dynamic energy grids and environmental impacts.
 
-## Format Requirements
+## Format Overview
 
-The carbon trace CSV file should contain the following columns:
+Unlike simple time-series files, this trace is **Event-Based**. Rows represent specific *changes* to the environment state. You only need to list a row when a value actually changes.
 
-1. **host_id**: The ID of the host
-1. **timestamp**: Unix timestamp in seconds
-2. **carbon_intensity**: Value in gCO2eq/kWh (grams of CO2 equivalent per kilowatt-hour)
+The CSV file must contain the following columns in order:
 
-### Specifications:
+1.  **timestamp**: Unix timestamp or simulation seconds (when the event occurs).
+2.  **host_id**: The ID of the host (or cluster/region) to update.
+3.  **property_name**: The specific attribute being updated.
+4.  **new_value**: The new data string for that property.
 
-- File must be in CSV format with comma (,) as the delimiter
-- The first line should be a header row with column names
-- Timestamps should be ordered chronologically
-- Carbon intensity values must be non-negative numeric values
+### Supported Properties
 
-## Example:
+| Property Name | Description | Value Format Example |
+| :--- | :--- | :--- |
+| `energy_mix` | Updates the % contribution of each source. | `"Hydro:80;Solar:20"` |
+| `carbon_footprint` | Updates the Carbon intensity (gCO2eq/kWh) of sources. | `"Hydro:24;Solar:45"` |
+| `water_footprint` | Updates the Water intensity (L/kWh) of sources. | `"Hydro:15;Solar:0.04"` |
+
+## Specifications
+
+* **Delimiter:** Comma (`,`)
+* **Ordering:** Rows must be strictly ordered chronologically by `timestamp`.
+* **Partial Updates:**
+    * Updating `energy_mix` **resets** the current mix percentages but **preserves** the known carbon/water intensities of the sources.
+    * Updating `carbon_footprint` or `water_footprint` **merges** the new values into the existing knowledge base without changing the active mix percentages.
+        
+        * Values set from sources not present in the energy mix will be discarded. 
+
+## Example
 
 ```csv
-host_id,timestamp,carbon_intensity
-Host1,1609459200,45.2
-Host2,1609462800,42.8
-Host1,1609466400,38.5
-Host3,1609470000,35.9
-Host3,1609473600,39.7
-```
-
-In this example:
-- First column: Host identifier
-- Second column: Unix timestamps (representing time points at 1-hour intervals)
-- Third column: Carbon intensity values in gCO2eq/kWh
-
-## Usage Notes:
-
-- When carbon footprint tracking is enabled, each machine in the platform file must have a `carbon_intensity` property
-- The carbon trace can be used to model time-varying carbon intensity for more realistic environmental impact simulations
-- For constant carbon intensity, use the value in the platform file
-- For dynamic carbon intensity, the CSV file values will override the platform file values at the specified timestamps
-- **⚠️ Be careful with incomplete rows or empty cells in the CSV file — they may cause the simulation to behave incorrectly or yield unexpected results. Always ensure that each row has valid values for all required fields.**
+timestamp,host_id,property_name,new_value
+0,host_br_01,carbon_footprint,"Hydro:24;Solar:45;Gas:490"
+0,host_br_01,water_footprint,"Hydro:15;Solar:0.04;Gas:0.8"
+0,host_br_01,energy_mix,"Hydro:80;Solar:20;Gas:0"
+3600,host_br_01,energy_mix,"Hydro:70;Solar:30;Gas:0"
+7200,host_br_01,energy_mix,"Hydro:60;Solar:40;Gas:0"
+172800,host_br_01,carbon_footprint,"Hydro:24;Solar:45"
+172800,host_br_01,energy_mix,"Hydro:50;Solar:10;Gas:40"
+360000,host_br_01,water_footprint,"Gas:5.3"
