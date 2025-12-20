@@ -51,6 +51,8 @@ src_without_main = [
     'src/batsim.hpp',
     'src/context.cpp',
     'src/context.hpp',
+    'src/environmental_footprint_tracer_reader.cpp',
+    'src/environmental_footprint_tracer_reader.hpp',
     'src/events.cpp',
     'src/events.hpp',
     'src/event_submitter.cpp',
