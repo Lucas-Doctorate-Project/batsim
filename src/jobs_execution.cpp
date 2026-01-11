@@ -508,10 +508,10 @@ void execute_job_process(BatsimContext * context,
         context->energy_tracer.add_job_start(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
-    if (context->carbon_footprint_used)
+    if (context->environmental_footprint_used)
     {
-        // Let's trace the carbon footprint
-        context->carbon_footprint_tracer.add_job_start(simgrid::s4u::Engine::get_clock(), job->id);
+        // Let's trace the environmental footprint
+        context->environmental_footprint_tracer.add_job_start(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
     // Job computation
@@ -576,10 +576,10 @@ void execute_job_process(BatsimContext * context,
         context->energy_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
-    if (context->carbon_footprint_used)
+    if (context->environmental_footprint_used)
     {
-        // Let's trace the carbon footprint
-        context->carbon_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
+        // Let's trace the environmental footprint
+        context->environmental_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
     if (notify_server_at_end and job->state != JobState::JOB_STATE_COMPLETED_KILLED)
@@ -725,10 +725,10 @@ void killer_process(BatsimContext * context,
                     context->energy_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
                 }
 
-                if (context->carbon_footprint_used)
+                if (context->environmental_footprint_used)
                 {
-                    // Let's trace the carbon footprint
-                    context->carbon_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
+                    // Let's trace the environmental footprint
+                    context->environmental_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
                 }
 
             }

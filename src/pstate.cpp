@@ -137,7 +137,7 @@ bool CurrentSwitches::mark_switch_as_done(int machine_id,
 
                 if (context->carbon_footprint_used)
                 {
-                    context->carbon_footprint_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(), s->all_machines, s->target_pstate);
+                    context->environmental_footprint_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(), s->all_machines, s->target_pstate);
                 }
 
                 delete s;
