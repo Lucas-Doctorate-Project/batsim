@@ -13,7 +13,7 @@
 
 #include <simgrid/host.h>
 #include <simgrid/plugins/energy.h>
-#include <simgrid/plugins/carbon_footprint.h>
+#include <simgrid/plugins/environmental_footprint.h>
 
 #include "batsim.hpp"
 #include "context.hpp"
@@ -497,6 +497,25 @@ long double Machines::total_carbon_footprint(const BatsimContext *context) const
     }
 
     return total_carbon_footprint;
+}
+
+long double Machines::total_water_footprint(const BatsimContext *context) const
+{
+    long double total_water_footprint = 0;
+
+    if (context->environmental_footprint_used)
+    {
+        for (const Machine * m : _machines)
+        {
+            total_water_footprint += static_cast<long double>(sg_host_get_water_footprint(m->host));
+        }
+    }
+    else
+    {
+        total_water_footprint = -1;
+    }
+
+    return total_water_footprint;
 }
 
 

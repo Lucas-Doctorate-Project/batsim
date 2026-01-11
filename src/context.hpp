@@ -46,7 +46,7 @@ struct BatsimContext
     PajeTracer paje_tracer;                         //!< The PajeTracer
     PStateChangeTracer pstate_tracer;               //!< The PStateChangeTracer
     EnergyConsumptionTracer energy_tracer;          //!< The EnergyConsumptionTracer
-    CarbonFootprintTracer carbon_footprint_tracer;  //!< The CarbonFootprintTracer
+    EnvironmentalFootprintTracer environmental_footprint_tracer;  //!< The EnvironmentalFootprintTracer
     MachineStateTracer machine_state_tracer;        //!< The MachineStateTracer
     JobsTracer jobs_tracer;                         //!< The JobsTracer
     CurrentSwitches current_switches;               //!< The current switches
@@ -74,7 +74,7 @@ struct BatsimContext
     unsigned long long nb_grouped_switches = 0;     //!< The number of switches done in the simulation (should equal to the number of received SET_RESOURCE_STATE events). Does not count transition states.
 
     bool energy_used;                               //!< Stores whether the energy part of Batsim should be used
-    bool carbon_footprint_used = false;             //!< Stores whether the carbon footprint part of Batsim should be used
+    bool environmental_footprint_used = false;      //!< Stores whether the environmental footprint part of Batsim should be used
     bool smpi_used;                                 //!< Stores whether SMPI should be used
     bool allow_compute_sharing;                     //!< Stores whether sharing (using the same machine to run different jobs concurrently) should be allowed on compute machines
     bool allow_storage_sharing;                     //!< Stores whether sharing (using the same machine to run different jobs concurrently) should be allowed on storage machines

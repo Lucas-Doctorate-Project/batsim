@@ -390,25 +390,25 @@ private:
 /**
  * @brief Traces the carbon footprint of the computation machines
  */
- class CarbonFootprintTracer
+ class EnvironmentalFootprintTracer
  {
  public:
      /**
-      * @brief Constructs a CarbonFootprintTracer
+      * @brief Constructs a EnvironmentalFootprintTracer
       */
-     CarbonFootprintTracer() = default;
+     EnvironmentalFootprintTracer() = default;
  
      /**
-      * @brief CarbonFootprintTracer cannot be copied.
+      * @brief EnvironmentalFootprintTracer cannot be copied.
       * @param[in] other Another instance
       */
-     CarbonFootprintTracer(const CarbonFootprintTracer & other) = delete;
+     EnvironmentalFootprintTracer(const EnvironmentalFootprintTracer & other) = delete;
  
      /**
-      * @brief Destroys a CarbonFootprintTracer
+      * @brief Destroys a EnvironmentalFootprintTracer
       * @details The output file is flushed and written
       */
-     ~CarbonFootprintTracer();
+     ~EnvironmentalFootprintTracer();
  
      /**
       * @brief Sets the Batsim context
@@ -457,15 +457,16 @@ private:
  private:
      /**
       * @brief Adds a line in the output file
-      * @return The carbon footprint of the computing machines from simulation's start to the current simulation time
+      * @return A pair with the carbon footprint and water footprint of the computing machines from simulation's start to the current simulation time
       * @param[in] date The date at which the event has occurred
       * @param[in] event_type The type of the event which occurred
       */
-     long double add_entry(double date, char event_type);
+     std::pair<long double, long double> add_entry(double date, char event_type);
  
      long double _last_entry_date = 0; //!< The date of the last entry
      long double _last_entry_energy = 0; //!< The energy of the last entry
-     long double _last_entry_carbon = 0; //!< The carbon footprint of the last entry
+     long double _last_entry_carbon_footprint = 0; //!< The carbon footprint of the last entry
+     long double _last_entry_water_footprint = 0; //!< The water footprint of the last entry
  
  private:
      BatsimContext * _context = nullptr; //!< The Batsim context
