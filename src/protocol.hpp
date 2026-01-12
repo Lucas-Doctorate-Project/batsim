@@ -178,6 +178,14 @@ public:
                                                double date) = 0;
 
     /**
+     * @brief Appends an ANSWER (water footprint) event.
+     * @param[in] water_footprint The total water footprint in liters.
+     * @param[in] date The event date. Must be greater than or equal to the previous event.
+     */
+    virtual void append_answer_water_footprint(double water_footprint,
+                                               double date) = 0;
+
+    /**
      * @brief Appends a NOTIFY event.
      * @param notify_type The type of the NOTIFY event
      * @param date The event date. Must be greater than or equal to the previous event date.
@@ -357,6 +365,14 @@ public:
       * @param[in] date The event date. Must be greater than or equal to the previous event.
       */
     void append_answer_carbon_footprint(double carbon_footprint,
+                                       double date);
+
+    /**
+     * @brief Appends an ANSWER (water footprint) event.
+     * @param[in] water_footprint The total water footprint in liters.
+     * @param[in] date The event date. Must be greater than or equal to the previous event.
+     */
+    void append_answer_water_footprint(double water_footprint,
                                        double date);
 
     /**
@@ -606,6 +622,6 @@ private:
 private:
     //! Maps message types to their handler functions
     std::map<std::string, std::function<void(JsonProtocolReader*, int, double, const rapidjson::Value&)>> _type_to_handler_map;
-    std::vector<std::string> accepted_requests = {"consumed_energy", "carbon_footprint"}; //!< The currently acceptes requests for the QUERY_REQUEST message
+    std::vector<std::string> accepted_requests = {"consumed_energy", "carbon_footprint", "water_footprint"}; //!< The currently acceptes requests for the QUERY_REQUEST message
     BatsimContext * context = nullptr; //!< The BatsimContext
 };
