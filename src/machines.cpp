@@ -475,7 +475,7 @@ long double Machines::total_carbon_footprint(const BatsimContext *context) const
 {
     long double total_carbon_footprint = 0;
 
-    if (context->carbon_footprint_used)
+    if (context->environmental_footprint_used)
     {
         for (const Machine * m : _machines)
         {
