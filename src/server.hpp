@@ -189,8 +189,15 @@ void server_on_sched_tell_me_energy(ServerData * data,
  * @param[in,out] task_data The data associated with the message the server received
  */
 void server_on_sched_tell_me_carbon_footprint(ServerData * data,
-                                              IPMessage * task_data);                                    
-
+                                              IPMessage * task_data);
+                                              
+/**
+ * @brief Server SCHED_TELL_ME_WATER_FOOTPRINT handler
+ * @param[in,out] data The data associated with the server_process
+ * @param[in,out] task_data The data associated with the message the server received
+ */
+void server_on_sched_tell_me_water_footprint(ServerData * data,
+                                                IPMessage * task_data); 
 /**
  * @brief Server WAIT_QUERY handler
  * @param[in,out] data The data associated with the server_process
