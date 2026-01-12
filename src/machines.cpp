@@ -208,23 +208,14 @@ void Machines::create_machines(const BatsimContext *context,
 
             }
 
-            if (context->carbon_footprint_used){
-                // Check if the machine has the "carbon_intensity" property
+            if (context->environmental_footprint_used) {
+                // Check if the machine has the "energy_mix" property
 
-                auto carbon_intensity_it = machine->properties.find("carbon_intensity");
-                if (carbon_intensity_it == machine->properties.end()) {
-                    xbt_assert(false, "Invalid platform file '%s': host '%s' doesn't have the 'carbon_intensity' property. "
-                                "This property is required when carbon footprint tracking is enabled.",
+                auto energy_mix_it = machine->properties.find("energy_mix");
+                if (energy_mix_it == machine->properties.end()) {
+                    xbt_assert(false, "Invalid platform file '%s': host '%s' doesn't have the 'energy_mix' property. "
+                                "This property is required when environmental footprint tracking is enabled.",
                                context->platform_filename.c_str(), machine->name.c_str());
-                }
-                // Check if the value is a valid double
-                try {
-                    double carbon_intensity = boost::lexical_cast<double>(carbon_intensity_it->second);
-                } catch (const boost::bad_lexical_cast&) {
-                    xbt_assert(false, "Invalid platform file '%s': host '%s' has an invalid 'carbon_intensity' value (%s). "
-                              "Value must be a numeric value.",
-                              context->platform_filename.c_str(), machine->name.c_str(), 
-                              carbon_intensity_it->second.c_str());
                 }
             }
 
