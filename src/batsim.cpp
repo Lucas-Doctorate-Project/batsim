@@ -45,7 +45,7 @@
 
 #include "batsim.hpp"
 #include "context.hpp"
-#include "environmental_footprint_trace_reader.hpp"
+#include "environmental_footprint_tracer_reader.hpp"
 #include "event_submitter.hpp"
 #include "events.hpp"
 #include "export.hpp"

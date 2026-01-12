@@ -1,6 +1,6 @@
 /*
  * Environmental Footprint Trace Reader for Batsim/SimGrid
- * src/env_trace_reader.hpp
+ * src/environmental_footprint_tracer_reader.hpp
  */
 
 #pragma once

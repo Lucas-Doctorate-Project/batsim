@@ -1,9 +1,9 @@
 /*
  * Environmental Trace Reader Implementation
- * src/env_trace_reader.cpp
+ * src/environmental_footprint_tracer_reader.cpp
  */
 
-#include "env_trace_reader.hpp"
+#include "environmental_footprint_tracer_reader.hpp"
 
 #include <simgrid/s4u.hpp>
 #include <simgrid/plugins/environmental_footprint.h>
@@ -42,10 +42,17 @@ void EnvironmentalTraceReader::read_trace(const std::string& filename)
             if (!host) 
                 continue; 
 
-            // Schedule the Event into the SimGrid engine
-            simgrid::s4u::Timer::set(timestamp, [=]() {
-                this->apply_update(host, property_to_update, new_values_str);
-            });
+            double delay = timestamp - simgrid::s4u::Engine::get_clock();
+            if (delay < 0) delay = 0;
+
+            simgrid::s4u::Actor::create(
+                "env_updater", 
+                host,          
+                [=]() {        
+                    simgrid::s4u::this_actor::sleep_for(delay);
+                    this->apply_update(host, property_to_update, new_values_str);
+                }
+            );
 
         } catch (const std::exception& e) {
             std::cerr << "Error parsing environmental trace line: " << line 
