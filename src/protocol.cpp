@@ -610,6 +610,47 @@ void JsonProtocolWriter::append_answer_water_footprint(double water_footprint,
     _events.PushBack(event, _alloc);
 }
 
+void JsonProtocolWriter::append_answer_carbon_intensity(double carbon_intensity,
+                                                        double date)
+{
+    /* {
+      "timestamp": 10.0,
+      "type": "ANSWER",
+      "data": {"carbon_intensity": 450.5}
+    } */
+
+    xbt_assert(date >= _last_date, "Date inconsistency");
+    _last_date = date;
+    _is_empty = false;
+
+    Value event(rapidjson::kObjectType);
+    event.AddMember("timestamp", Value().SetDouble(date), _alloc);
+    event.AddMember("type", Value().SetString("ANSWER"), _alloc);
+    event.AddMember("data", Value().SetObject().AddMember("carbon_intensity", Value().SetDouble(carbon_intensity), _alloc), _alloc);
+
+    _events.PushBack(event, _alloc);
+}
+
+void JsonProtocolWriter::append_answer_water_intensity(double water_intensity,
+                                                       double date)
+{
+    /* {
+      "timestamp": 10.0,
+      "type": "ANSWER",
+      "data": {"water_intensity": 2.5}
+    } */
+
+    xbt_assert(date >= _last_date, "Date inconsistency");
+    _last_date = date;
+    _is_empty = false;
+
+    Value event(rapidjson::kObjectType);
+    event.AddMember("timestamp", Value().SetDouble(date), _alloc);
+    event.AddMember("type", Value().SetString("ANSWER"), _alloc);
+    event.AddMember("data", Value().SetObject().AddMember("water_intensity", Value().SetDouble(water_intensity), _alloc), _alloc);
+
+    _events.PushBack(event, _alloc);
+}
 
 void JsonProtocolWriter::append_notify(const std::string & notify_type,
                                        double date)
@@ -864,10 +905,20 @@ void JsonProtocolReader::handle_query(int event_number, double timestamp, const 
             xbt_assert(value_object.ObjectEmpty(), "Invalid JSON message: the value of '%s' inside the 'requests' object of the 'data' object of event %d (QUERY) should be empty", key.c_str(), event_number);
             send_message_at_time(timestamp, "server", IPMessageType::SCHED_TELL_ME_CARBON_FOOTPRINT);
         }
-        else if (key == "water_footprint") 
+        else if (key == "water_footprint")
         {
             xbt_assert(value_object.ObjectEmpty(), "Invalid JSON message: the value of '%s' inside the 'requests' object of the 'data' object of event %d (QUERY) should be empty", key.c_str(), event_number);
             send_message_at_time(timestamp, "server", IPMessageType::SCHED_TELL_ME_WATER_FOOTPRINT);
+        }
+        else if (key == "carbon_intensity")
+        {
+            xbt_assert(value_object.ObjectEmpty(), "Invalid JSON message: the value of '%s' inside the 'requests' object of the 'data' object of event %d (QUERY) should be empty", key.c_str(), event_number);
+            send_message_at_time(timestamp, "server", IPMessageType::SCHED_TELL_ME_CARBON_INTENSITY);
+        }
+        else if (key == "water_intensity")
+        {
+            xbt_assert(value_object.ObjectEmpty(), "Invalid JSON message: the value of '%s' inside the 'requests' object of the 'data' object of event %d (QUERY) should be empty", key.c_str(), event_number);
+            send_message_at_time(timestamp, "server", IPMessageType::SCHED_TELL_ME_WATER_INTENSITY);
         }
         else
         {

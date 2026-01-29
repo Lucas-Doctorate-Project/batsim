@@ -509,6 +509,25 @@ long double Machines::total_water_footprint(const BatsimContext *context) const
     return total_water_footprint;
 }
 
+long double Machines::carbon_intensity(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used || _machines.empty())
+    {
+        return -1;
+    }
+
+    return static_cast<long double>(sg_host_get_carbon_intensity(_machines[0]->host));
+}
+
+long double Machines::water_intensity(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used || _machines.empty())
+    {
+        return -1;
+    }
+
+    return static_cast<long double>(sg_host_get_water_intensity(_machines[0]->host));
+}
 
 unsigned int Machines::nb_machines() const
 {

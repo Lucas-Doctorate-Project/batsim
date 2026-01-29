@@ -40,6 +40,8 @@ enum class IPMessageType
     ,SCHED_TELL_ME_ENERGY   //!< Scheduler -> Server. The scheduler tells the server a scheduling event occured (the scheduler wants to know the platform consumed energy).
     ,SCHED_TELL_ME_CARBON_FOOTPRINT   //!< Scheduler -> Server. The scheduler tells the server a scheduling event occured (the scheduler wants to know the platform's carbon footprint).
     ,SCHED_TELL_ME_WATER_FOOTPRINT   //!< Scheduler -> Server. The scheduler tells the server a scheduling event occured (the scheduler wants to know the platform's water footprint).
+    ,SCHED_TELL_ME_CARBON_INTENSITY  //!< Scheduler -> Server. The scheduler wants to know the current average carbon intensity.
+    ,SCHED_TELL_ME_WATER_INTENSITY   //!< Scheduler -> Server. The scheduler wants to know the current average water intensity.
     ,SCHED_SET_JOB_METADATA //!< Scheduler -> Server. The scheduler tells the server a scheduling event occured (a SET_JOB_METADATA message).
     ,SCHED_WAIT_ANSWER      //!< Scheduler -> Server. The scheduler tells the server a scheduling event occured (a WAIT_ANSWER message).
     ,WAIT_QUERY             //!< Server -> Scheduler. The scheduler tells the server a scheduling event occured (a WAIT_ANSWER message).
