@@ -70,10 +70,10 @@ void EnvironmentalTraceReader::apply_update(simgrid::s4u::Host* host, const std:
     if (property_to_update == "energy_mix") {
         sg_host_set_energy_mix_composition(host, data_map);
     }
-    else if (property_to_update == "carbon_footprint") {
+    else if (property_to_update == "carbon_intensity") {
         sg_host_set_carbon_intensities(host, data_map);
     }
-    else if (property_to_update == "water_footprint") {
+    else if (property_to_update == "water_intensity") {
         sg_host_set_water_intensities(host, data_map);
     }
     else {
