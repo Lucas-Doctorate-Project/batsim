@@ -866,7 +866,7 @@ bool machine_comparator_name(const Machine *m1, const Machine *m2)
     if (cmp_ret == 0)
         cmp_ret = strcmp(m1->name.c_str(), m2->name.c_str());
 
-    return cmp_ret <= 0;
+    return cmp_ret < 0;
 }
 
 void sort_machines_by_ascending_name(std::vector<Machine *> machines_vect)
