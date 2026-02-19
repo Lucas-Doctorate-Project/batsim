@@ -365,6 +365,24 @@ long double consumed_energy_on_machines(BatsimContext * context,
                                         const IntervalSet & machines);
 
 /**
+ * @brief Computes the carbon footprint accumulated on some machines since time 0
+ * @param[in] context The BatsimContext
+ * @param[in] machines The machines whose footprint must be computed
+ * @return The carbon footprint (in gCO2e) accumulated on the machines since time 0
+ */
+long double carbon_footprint_on_machines(BatsimContext * context,
+                                         const IntervalSet & machines);
+
+/**
+ * @brief Computes the water footprint accumulated on some machines since time 0
+ * @param[in] context The BatsimContext
+ * @param[in] machines The machines whose footprint must be computed
+ * @return The water footprint (in liters) accumulated on the machines since time 0
+ */
+long double water_footprint_on_machines(BatsimContext * context,
+                                        const IntervalSet & machines);
+
+/**
  * @brief Sorts the given vector of machines by ascending name (lexicographically speaking)
  * @param[in,out] machines_vect The vector of machines to sort
  */

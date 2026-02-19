@@ -208,16 +208,6 @@ void Machines::create_machines(const BatsimContext *context,
 
             }
 
-            if (context->environmental_footprint_used) {
-                // Check if the machine has the "energy_mix" property
-
-                auto energy_mix_it = machine->properties.find("energy_mix");
-                if (energy_mix_it == machine->properties.end()) {
-                    xbt_assert(false, "Invalid platform file '%s': host '%s' doesn't have the 'energy_mix' property. "
-                                "This property is required when environmental footprint tracking is enabled.",
-                               context->platform_filename.c_str(), machine->name.c_str());
-                }
-            }
 
 
             // Let the computation pstates be defined by those who are not sleep pstates nor virtual transition pstates
@@ -913,4 +903,42 @@ long double consumed_energy_on_machines(BatsimContext * context,
     }
 
     return consumed_energy;
+}
+
+long double carbon_footprint_on_machines(BatsimContext * context,
+                                          const IntervalSet & machines)
+{
+    if (!context->environmental_footprint_used)
+    {
+        return 0;
+    }
+
+    long double carbon_footprint = 0;
+    for (auto it = machines.elements_begin(); it != machines.elements_end(); ++it)
+    {
+        int machine_id = *it;
+        Machine * machine = context->machines[machine_id];
+        carbon_footprint += static_cast<long double>(sg_host_get_carbon_footprint(machine->host));
+    }
+
+    return carbon_footprint;
+}
+
+long double water_footprint_on_machines(BatsimContext * context,
+                                         const IntervalSet & machines)
+{
+    if (!context->environmental_footprint_used)
+    {
+        return 0;
+    }
+
+    long double water_footprint = 0;
+    for (auto it = machines.elements_begin(); it != machines.elements_end(); ++it)
+    {
+        int machine_id = *it;
+        Machine * machine = context->machines[machine_id];
+        water_footprint += static_cast<long double>(sg_host_get_water_footprint(machine->host));
+    }
+
+    return water_footprint;
 }
