@@ -895,7 +895,7 @@ void EnvironmentalFootprintTracer::set_filename(const string &filename)
     xbt_assert(_wbuf == nullptr, "Double call of EnvironmentalFootprintTracer::set_filename");
     _wbuf = new WriteBuffer(filename);
 
-    _wbuf->append_text("time,energy(J),carbon_footprint(grams of CO2e per kwh),water_footprint(liters per kwh),event_type,ecarbon\n");
+    _wbuf->append_text("time,carbon_footprint(gCO2e),water_footprint(L),event_type,carbon_intensity(gCO2e/kWh),water_intensity(L/kWh)\n");
 }
 
 void EnvironmentalFootprintTracer::add_job_start(double date, JobIdentifier job_id)
@@ -936,22 +936,10 @@ std::pair<long double, long double> EnvironmentalFootprintTracer::add_entry(doub
 {
     xbt_assert(_wbuf != nullptr, "wrong call: _wbuf is null");
 
-    long double energy = _context->machines.total_consumed_energy(_context);
     long double carbon_footprint = _context->machines.total_carbon_footprint(_context);
     long double water_footprint = _context->machines.total_water_footprint(_context);
-
-    long double time_diff = static_cast<long double>(date) - _last_entry_date;
-    long double carbon_footprint_diff = carbon_footprint - _last_entry_carbon_footprint;
-    long double water_footprint_diff = water_footprint - _last_entry_water_footprint;
-
-    long double ecarbon = -1;
-    long double ewater = -1;
-
-    if (time_diff > 0)
-    {
-        ecarbon = carbon_footprint_diff / time_diff;
-        ewater = water_footprint_diff / time_diff;
-    }
+    long double carbon_intensity = _context->machines.carbon_intensity(_context);
+    long double water_intensity = _context->machines.water_intensity(_context);
 
     const int buf_size = 256;
     int nb_printed;
@@ -959,15 +947,16 @@ std::pair<long double, long double> EnvironmentalFootprintTracer::add_entry(doub
     char * buf = static_cast<char*>(malloc(sizeof(char) * buf_size));
     xbt_assert(buf != NULL, "Couldn't allocate memory");
 
-    if (ecarbon != -1 && ewater != -1)
+    if (carbon_intensity >= 0 && water_intensity >= 0)
     {
-        nb_printed = snprintf(buf, buf_size, "%lf,%Lf,%Lf,%Lf, %c,%lf\n",
-                              date, energy, carbon_footprint, water_footprint, event_type, static_cast<double>(ecarbon));
+        nb_printed = snprintf(buf, buf_size, "%lf,%Lf,%Lf,%c,%lf,%lf\n",
+                              date, carbon_footprint, water_footprint, event_type,
+                              static_cast<double>(carbon_intensity), static_cast<double>(water_intensity));
     }
     else
     {
-        nb_printed = snprintf(buf, buf_size, "%lf,%Lf,%Lf,%Lf,%c,NA\n",
-                              date, energy, carbon_footprint, water_footprint, event_type);
+        nb_printed = snprintf(buf, buf_size, "%lf,%Lf,%Lf,%c,NA,NA\n",
+                              date, carbon_footprint, water_footprint, event_type);
     }
     xbt_assert(nb_printed < buf_size - 1,
                "Writing error: buffer has been completely filled, some information might "
@@ -977,8 +966,6 @@ std::pair<long double, long double> EnvironmentalFootprintTracer::add_entry(doub
 
     free(buf);
 
-    _last_entry_date = static_cast<long double>(date);
-    _last_entry_energy = energy;
     _last_entry_carbon_footprint = carbon_footprint;
     _last_entry_water_footprint = water_footprint;
 
@@ -1106,6 +1093,8 @@ void JobsTracer::initialize(BatsimContext *context,
         "stretch",
         "allocated_resources",
         "consumed_energy",
+        "consumed_carbon",
+        "consumed_water",
         "metadata"
     };
     string header = boost::algorithm::join(_job_keys, ",") + "\n";
@@ -1187,6 +1176,12 @@ void JobsTracer::finalize()
 
     long double total_consumed_energy = _context->energy_last_job_completion - _context->energy_first_job_submission;
     output_map["consumed_joules"] = to_string(static_cast<double>(total_consumed_energy));
+
+    if (_context->environmental_footprint_used)
+    {
+        output_map["total_carbon_footprint"] = to_string(static_cast<double>(_context->machines.total_carbon_footprint(_context)));
+        output_map["total_water_footprint"] = to_string(static_cast<double>(_context->machines.total_water_footprint(_context)));
+    }
 
     output_map["nb_machine_switches"] = to_string(_context->nb_machine_switches);
     output_map["nb_grouped_switches"] = to_string(_context->nb_grouped_switches);
@@ -1314,6 +1309,8 @@ void JobsTracer::write_job(const JobPtr job)
     _job_map["turnaround_time"] = rejected ? "" : to_string(static_cast<double>(job->starting_time + job->runtime - job->submission_time));
     _job_map["stretch"] = rejected ? "" : to_string(static_cast<double>((job->starting_time + job->runtime - job->submission_time) / job->runtime));
     _job_map["consumed_energy"] = rejected ? "" : to_string(job->consumed_energy);
+    _job_map["consumed_carbon"] = (rejected || !_context->environmental_footprint_used) ? "" : to_string(static_cast<double>(job->consumed_carbon));
+    _job_map["consumed_water"] = (rejected || !_context->environmental_footprint_used) ? "" : to_string(static_cast<double>(job->consumed_water));
     _job_map["allocated_resources"] = job->allocation.to_string_hyphen(" ");
     _job_map["metadata"] = '"' + job->metadata + '"';
     // And then write them

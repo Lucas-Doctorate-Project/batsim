@@ -463,8 +463,6 @@ private:
       */
      std::pair<long double, long double> add_entry(double date, char event_type);
  
-     long double _last_entry_date = 0; //!< The date of the last entry
-     long double _last_entry_energy = 0; //!< The energy of the last entry
      long double _last_entry_carbon_footprint = 0; //!< The carbon footprint of the last entry
      long double _last_entry_water_footprint = 0; //!< The water footprint of the last entry
  
