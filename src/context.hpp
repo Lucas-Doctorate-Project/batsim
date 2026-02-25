@@ -87,4 +87,14 @@ struct BatsimContext
     std::string batsim_version;                     //!< The Batsim version (got from the BATSIM_VERSION variable that is usually set by the build system)
 
     ~BatsimContext();
+
+    /**
+     * @brief Notifies the context that an environmental property has changed for a zone.
+     * @details If environmental footprint tracing is enabled, maps the property name to a
+     *          string event type and appends a row to the carbon-footprint CSV.
+     * @param[in] time The simulation clock time of the change
+     * @param[in] zone_name The NetZone whose property changed
+     * @param[in] property The property that changed: "energy_mix", "carbon_intensity", or "water_intensity"
+     */
+    void notify_environmental_change(double time, const std::string & zone_name, const std::string & property);
 };

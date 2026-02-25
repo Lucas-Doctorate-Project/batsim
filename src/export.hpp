@@ -423,49 +423,32 @@ private:
      void set_filename(const std::string & filename);
  
      /**
-      * @brief Adds a job start in the tracer
-      * @param[in] date The date at which the job has been started
-      * @param[in] job_id The job unique number
+      * @brief Adds a zone-level environmental event to the tracer
+      * @param[in] date The simulation time of the event
+      * @param[in] zone_name The name of the NetZone the event applies to
+      * @param[in] event_type The string event type: "mix", "ci", or "wi"
       */
-     void add_job_start(double date, JobIdentifier job_id);
- 
-     /**
-      * @brief Adds a job end in the tracer
-      * @param[in] date The date at which the job has ended
-      * @param[in] job_id The job unique number
-      */
-     void add_job_end(double date, JobIdentifier job_id);
- 
-     /**
-      * @brief Adds a power state change in the tracer
-      * @param[in] date The date at which the power state has been changed
-      * @param[in] machines The machines whose power state has changed
-      * @param[in] new_pstate The new power state of the machine
-      */
-     void add_pstate_change(double date, const IntervalSet & machines, int new_pstate);
- 
+     void add_zone_event(double date, const std::string & zone_name, const std::string & event_type);
+
      /**
       * @brief Forces the flushing of what happened to the output file
       */
      void flush();
- 
+
      /**
       * @brief Closes the buffer and its associated output file
       */
      void close_buffer();
- 
+
  private:
      /**
-      * @brief Adds a line in the output file
-      * @return A pair with the carbon footprint and water footprint of the computing machines from simulation's start to the current simulation time
-      * @param[in] date The date at which the event has occurred
-      * @param[in] event_type The type of the event which occurred
+      * @brief Writes one CSV row for the given zone and event type
+      * @param[in] date The simulation time of the event
+      * @param[in] zone_name The name of the NetZone
+      * @param[in] event_type The string event type ("mix", "ci", "wi")
       */
-     std::pair<long double, long double> add_entry(double date, char event_type);
- 
-     long double _last_entry_carbon_footprint = 0; //!< The carbon footprint of the last entry
-     long double _last_entry_water_footprint = 0; //!< The water footprint of the last entry
- 
+     void add_entry(double date, const std::string & zone_name, const std::string & event_type);
+
  private:
      BatsimContext * _context = nullptr; //!< The Batsim context
      WriteBuffer * _wbuf = nullptr; //!< The buffer used to handle the output file

@@ -291,6 +291,38 @@ public:
     long double water_intensity(const BatsimContext * context) const;
 
     /**
+     * @brief Computes and returns the total carbon footprint of all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The carbon footprint (gCO2e), or -1 if environmental footprint is not enabled
+     */
+    long double zone_carbon_footprint(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Computes and returns the total water footprint of all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The water footprint (L), or -1 if environmental footprint is not enabled
+     */
+    long double zone_water_footprint(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Returns the carbon intensity of a NetZone (from its first host)
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The carbon intensity (gCO2e/kWh), or -1 if environmental footprint is not enabled
+     */
+    long double zone_carbon_intensity(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Returns the water intensity of a NetZone (from its first host)
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The water intensity (L/kWh), or -1 if environmental footprint is not enabled
+     */
+    long double zone_water_intensity(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
      * @brief Returns the total number of machines
      * @return The total number of machines
      */

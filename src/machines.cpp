@@ -22,6 +22,7 @@
 #include "permissions.hpp"
 
 #include <fstream>
+#include <queue>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -517,6 +518,63 @@ long double Machines::water_intensity(const BatsimContext *context) const
     }
 
     return static_cast<long double>(sg_host_get_water_intensity(_machines[0]->host));
+}
+
+static simgrid::s4u::NetZone* find_zone_by_name_machines(const std::string& name) {
+    std::queue<simgrid::s4u::NetZone*> q;
+    q.push(simgrid::s4u::Engine::get_instance()->get_netzone_root());
+    while (!q.empty()) {
+        auto* z = q.front(); q.pop();
+        if (z->get_name() == name) return z;
+        for (auto* child : z->get_children()) q.push(child);
+    }
+    return nullptr;
+}
+
+long double Machines::zone_carbon_footprint(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_carbon_footprint: NetZone '%s' not found", zone_name.c_str());
+    long double total = 0;
+    for (auto* host : zone->get_all_hosts())
+        total += static_cast<long double>(sg_host_get_carbon_footprint(host));
+    return total;
+}
+
+long double Machines::zone_water_footprint(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_water_footprint: NetZone '%s' not found", zone_name.c_str());
+    long double total = 0;
+    for (auto* host : zone->get_all_hosts())
+        total += static_cast<long double>(sg_host_get_water_footprint(host));
+    return total;
+}
+
+long double Machines::zone_carbon_intensity(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_carbon_intensity: NetZone '%s' not found", zone_name.c_str());
+    auto hosts = zone->get_all_hosts();
+    if (hosts.empty()) return -1;
+    return static_cast<long double>(sg_host_get_carbon_intensity(hosts[0]));
+}
+
+long double Machines::zone_water_intensity(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_water_intensity: NetZone '%s' not found", zone_name.c_str());
+    auto hosts = zone->get_all_hosts();
+    if (hosts.empty()) return -1;
+    return static_cast<long double>(sg_host_get_water_intensity(hosts[0]));
 }
 
 unsigned int Machines::nb_machines() const

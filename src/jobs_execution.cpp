@@ -513,8 +513,6 @@ void execute_job_process(BatsimContext * context,
         // Snapshot footprints before the job runs
         job->consumed_carbon = carbon_footprint_on_machines(context, job->allocation);
         job->consumed_water = water_footprint_on_machines(context, job->allocation);
-        // Let's trace the environmental footprint
-        context->environmental_footprint_tracer.add_job_start(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
     // Job computation
@@ -586,8 +584,6 @@ void execute_job_process(BatsimContext * context,
         long double water_before = job->consumed_water;
         job->consumed_carbon = carbon_footprint_on_machines(context, job->allocation) - carbon_before;
         job->consumed_water = water_footprint_on_machines(context, job->allocation) - water_before;
-        // Let's trace the environmental footprint
-        context->environmental_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
     }
 
     if (notify_server_at_end and job->state != JobState::JOB_STATE_COMPLETED_KILLED)
@@ -740,8 +736,6 @@ void killer_process(BatsimContext * context,
                     long double water_before = job->consumed_water;
                     job->consumed_carbon = carbon_footprint_on_machines(context, job->allocation) - carbon_before;
                     job->consumed_water = water_footprint_on_machines(context, job->allocation) - water_before;
-                    // Let's trace the environmental footprint
-                    context->environmental_footprint_tracer.add_job_end(simgrid::s4u::Engine::get_clock(), job->id);
                 }
 
             }

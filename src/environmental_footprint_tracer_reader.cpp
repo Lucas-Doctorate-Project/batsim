@@ -8,6 +8,8 @@
 #include <simgrid/s4u.hpp>
 #include <simgrid/plugins/environmental_footprint.h>
 
+#include "context.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -25,7 +27,8 @@ static simgrid::s4u::NetZone* find_zone_by_name(const std::string& name) {
     return nullptr;
 }
 
-EnvironmentalTraceReader::EnvironmentalTraceReader(const std::string& filename)
+EnvironmentalTraceReader::EnvironmentalTraceReader(const std::string& filename, BatsimContext* context)
+    : _context(context)
 {
     read_trace(filename);
 }
@@ -58,13 +61,16 @@ void EnvironmentalTraceReader::read_trace(const std::string& filename)
             double delay = timestamp - simgrid::s4u::Engine::get_clock();
             if (delay < 0) delay = 0;
 
+            std::string zone_name = host_name;
             simgrid::s4u::Actor::create(
-                "env_zone_upd_" + host_name,
+                "env_zone_upd_" + zone_name,
                 hosts[0],
-                [this, delay, hosts, property_to_update, new_values_str]() {
+                [ctx = _context, delay, hosts, zone_name, property_to_update, new_values_str]() {
                     simgrid::s4u::this_actor::sleep_for(delay);
                     for (auto* h : hosts)
-                        this->apply_update(h, property_to_update, new_values_str);
+                        EnvironmentalTraceReader::apply_update(h, property_to_update, new_values_str);
+                    ctx->notify_environmental_change(
+                        simgrid::s4u::Engine::get_clock(), zone_name, property_to_update);
                 }
             );
 

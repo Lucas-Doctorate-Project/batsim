@@ -771,7 +771,7 @@ void start_initial_simulation_processes(const MainArguments & main_args,
     {
         std::unique_ptr<EnvironmentalTraceReader> env_reader;
         XBT_INFO("Loading environmental trace from: %s", main_args.environmental_footprint_trace_file.c_str());
-        env_reader = std::make_unique<EnvironmentalTraceReader>(main_args.environmental_footprint_trace_file);
+        env_reader = std::make_unique<EnvironmentalTraceReader>(main_args.environmental_footprint_trace_file, context);
     }
 
     if (!is_batexec)

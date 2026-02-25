@@ -135,11 +135,6 @@ bool CurrentSwitches::mark_switch_as_done(int machine_id,
                     context->energy_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(), s->all_machines, s->target_pstate);
                 }
 
-                if (context->environmental_footprint_used)
-                {
-                    context->environmental_footprint_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(), s->all_machines, s->target_pstate);
-                }
-
                 delete s;
                 return true;
             }
