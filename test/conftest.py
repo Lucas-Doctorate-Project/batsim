@@ -225,7 +225,11 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture(scope="session", autouse=True)
 def manage_redis_server(request):
     print('Trying to run a redis-server...')
-    proc = subprocess.Popen('redis-server', stdout=subprocess.PIPE)
+    try:
+        proc = subprocess.Popen('redis-server', stdout=subprocess.PIPE)
+    except FileNotFoundError:
+        print('redis-server not found in PATH; skipping.')
+        return
     try:
         out, _ = proc.communicate(timeout=1)
         if 'Address already in use' in str(out):
