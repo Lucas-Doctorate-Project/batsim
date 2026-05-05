@@ -933,6 +933,9 @@ void EnvironmentalFootprintTracer::add_entry(double date, const std::string & zo
     long double water_footprint  = _context->machines.zone_water_footprint(_context, zone_name);
     long double carbon_intensity = _context->machines.zone_carbon_intensity(_context, zone_name);
     long double water_intensity  = _context->machines.zone_water_intensity(_context, zone_name);
+    long double pue = _context->machines.zone_pue(_context, zone_name);
+    long double wue = _context->machines.zone_wue(_context, zone_name);
+
 
     const int buf_size = 512;
     int nb_printed;

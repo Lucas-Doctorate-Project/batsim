@@ -94,7 +94,7 @@ struct BatsimContext
      *          string event type and appends a row to the carbon-footprint CSV.
      * @param[in] time The simulation clock time of the change
      * @param[in] zone_name The NetZone whose property changed
-     * @param[in] property The property that changed: "energy_mix", "carbon_intensity", or "water_intensity"
+     * @param[in] property The property that changed: "carbon_intensity", "water_intensity", "pue" or "wue"
      */
     void notify_environmental_change(double time, const std::string & zone_name, const std::string & property);
 };

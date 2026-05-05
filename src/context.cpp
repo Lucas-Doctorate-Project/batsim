@@ -17,12 +17,14 @@ void BatsimContext::notify_environmental_change(double time, const std::string &
         return;
 
     std::string event_type;
-    if (property == "energy_mix")
-        event_type = "mix";
-    else if (property == "carbon_intensity")
+    if (property == "carbon_intensity")
         event_type = "ci";
     else if (property == "water_intensity")
         event_type = "wi";
+    else if (property == "pue")
+        event_type = "pue";
+    else if (property == "wue")
+        event_type = "wue";
     else
         return; // unknown property — ignore silently
 
