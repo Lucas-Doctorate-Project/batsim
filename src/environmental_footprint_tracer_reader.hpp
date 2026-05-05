@@ -38,10 +38,6 @@ private:
      */
     static void apply_update(simgrid::s4u::Host* host, const std::string& property_to_update, const std::string& new_values_str);
 
-    /**
-     * @brief Helper: Parses "Hydro:80;Solar:20" strings into a map.
-     */
-    static std::map<std::string, double> parse_value_map(const std::string& input);
 
     /**
      * @brief Helper: CSV line splitter.

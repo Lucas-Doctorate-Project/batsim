@@ -1,45 +1,50 @@
 # Environmental Trace CSV Format
 
-This document describes the standard format for environmental trace CSV files used in Batsim/SimGrid to simulate dynamic energy grids and environmental impacts.
+This document describes the standard format for environmental trace CSV files used in Batsim/SimGrid to simulate dynamic energy grids and environmental impacts based on the component model (Off-site, On-site, and Embodied).
 
 ## Format Overview
 
 Unlike simple time-series files, this trace is **Event-Based**. Rows represent specific *changes* to the environment state. You only need to list a row when a value actually changes.
 
-The CSV file must contain the following columns in order:
+The CSV file must contain the following columns, strictly in this order:
 
 1.  **timestamp**: Unix timestamp or simulation seconds (when the event occurs).
-2.  **host_id**: The ID of the host (or cluster/region) to update.
+2.  **host_id**: The ID of the host (or region/cluster) to be updated.
 3.  **property_name**: The specific attribute being updated.
-4.  **new_value**: The new data string for that property.
+4.  **new_value**: The new numeric data for that property.
 
-### Supported Properties
+## Supported Properties
+
+The trace directly feeds consolidated intensities and infrastructure metrics to the simulation, avoiding complex string parsing at runtime.
 
 | Property Name | Description | Value Format Example |
 | :--- | :--- | :--- |
-| `energy_mix` | Updates the % contribution of each source. | `"Hydro:80;Solar:20"` |
-| `carbon_intensity` | Updates the Carbon intensity (gCO2eq/kWh) of sources. | `"Hydro:24;Solar:45"` |
-| `water_intensity` | Updates the Water intensity (L/kWh) of sources. | `"Hydro:15;Solar:0.04"` |
+| `carbon_intensity` | Updates the consolidated **off-site** Carbon intensity of the grid (gCO₂eq/kWh). | `500.0` |
+| `water_intensity` | Updates the consolidated **off-site** Water intensity of the grid (L/kWh). | `15.5` |
+| `wue` | Updates the **on-site** Water Usage Effectiveness (L/kWh), which usually fluctuates based on weather/cooling needs. | `1.8` |
+| `pue` | Updates the datacenter's Power Usage Effectiveness. | `1.2` |
 
-## Specifications
+## Technical Specifications
 
-* **Delimiter:** Comma (`,`)
-* **Ordering:** Rows must be strictly ordered chronologically by `timestamp`.
-* **Partial Updates:**
-    * Updating `energy_mix` **resets** the current mix percentages but **preserves** the known carbon/water intensities of the sources.
-    * Updating `carbon_intensity` or `water_intensity` **merges** the new values into the existing knowledge base without changing the active mix percentages.
-        
-        * Values set from sources not present in the energy mix will be discarded. 
+* **Delimiter:** Comma (`,`).
+* **Ordering:** Rows must be strictly ordered chronologically by the `timestamp`.
+* **Update Behavior:** * When updating any property, the new value immediately **overwrites** the previous one.
+    * The environmental footprint plugin automatically calculates the incremental accumulation using the *old* value for the elapsed time interval, before applying the *new* value for future calculations.
+* **Units:**
+    * Energy is handled internally in Joules and converted to kWh to apply the intensities.
+    * Carbon is expressed in grams (g).
+    * Water is expressed in liters (L).
 
-## Example
+## Usage Example
 
 ```csv
 timestamp,host_id,property_name,new_value
-0,host_br_01,carbon_intensity,"Hydro:24;Solar:45;Gas:490"
-0,host_br_01,water_intensity,"Hydro:15;Solar:0.04;Gas:0.8"
-0,host_br_01,energy_mix,"Hydro:80;Solar:20;Gas:0"
-3600,host_br_01,energy_mix,"Hydro:70;Solar:30;Gas:0"
-7200,host_br_01,energy_mix,"Hydro:60;Solar:40;Gas:0"
-172800,host_br_01,carbon_intensity,"Hydro:24;Solar:45"
-172800,host_br_01,energy_mix,"Hydro:50;Solar:10;Gas:40"
-360000,host_br_01,water_intensity,"Gas:5.3"
+0,Earth,carbon_intensity,120.5
+0,Earth,water_intensity,15.2
+0,Earth,wue,0.8
+0,Earth,pue,1.15
+3600,Earth,carbon_intensity,150.0
+3600,Earth,wue,1.2
+7200,Earth,carbon_intensity,200.0
+7200,Earth,water_intensity,18.0
+14400,Earth,wue,0.4

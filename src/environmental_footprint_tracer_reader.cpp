@@ -85,42 +85,28 @@ void EnvironmentalTraceReader::read_trace(const std::string& filename)
 
 void EnvironmentalTraceReader::apply_update(simgrid::s4u::Host* host, const std::string& property_to_update, const std::string& new_values_str) 
 {
-    auto data_map = parse_value_map(new_values_str);
+    try {
+        double new_val = std::stod(new_values_str);
 
-    if (property_to_update == "energy_mix") {
-        sg_host_set_energy_mix_composition(host, data_map);
-    }
-    else if (property_to_update == "carbon_intensity") {
-        sg_host_set_carbon_intensities(host, data_map);
-    }
-    else if (property_to_update == "water_intensity") {
-        sg_host_set_water_intensities(host, data_map);
-    }
-    else {
-        std::cerr << "Warning: Unknown property in trace: " << property_to_update << std::endl;
-    }
-}
-
-std::map<std::string, double> EnvironmentalTraceReader::parse_value_map(const std::string& input) 
-{
-    std::map<std::string, double> result;
-    std::stringstream ss(input);
-    std::string segment;
-
-    while(std::getline(ss, segment, ';')) {
-        auto pos = segment.find(':');
-        if (pos != std::string::npos) {
-            try {
-                std::string key = segment.substr(0, pos);
-                double val = std::stod(segment.substr(pos + 1));
-                result[key] = val;
-            } catch (...) {
-                // Ignore malformed pairs safely
-            }
+        if (property_to_update == "carbon_intensity") {
+            sg_host_set_carbon_intensity(host, new_val);
         }
+        else if (property_to_update == "water_intensity") {
+            sg_host_set_water_intensity(host, new_val);
+        }
+        else if (property_to_update == "wue") {
+            sg_host_set_wue(host, new_val);
+        }
+        else if (property_to_update == "pue") {
+            sg_host_set_pue(host, new_val);
+        }
+        else {
+            std::cerr << "Warning: Unknown property in trace: " << property_to_update << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error applying trace update: Invalid numeric value '" << new_values_str 
+                  << "' for property '" << property_to_update << "'. Reason: " << e.what() << std::endl;
     }
-
-    return result;
 }
 
 std::vector<std::string> EnvironmentalTraceReader::split_csv_line(const std::string& line) {

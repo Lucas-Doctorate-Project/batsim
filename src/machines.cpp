@@ -577,6 +577,30 @@ long double Machines::zone_water_intensity(const BatsimContext *context, const s
     return static_cast<long double>(sg_host_get_water_intensity(hosts[0]));
 }
 
+
+long double Machines::zone_pue(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_pue: NetZone '%s' not found", zone_name.c_str());
+    auto hosts = zone->get_all_hosts();
+    if (hosts.empty()) return -1;
+    return static_cast<long double>(sg_host_get_pue(hosts[0]));
+}
+
+
+long double Machines::zone_wue(const BatsimContext *context, const std::string & zone_name) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+    simgrid::s4u::NetZone* zone = find_zone_by_name_machines(zone_name);
+    xbt_assert(zone != nullptr, "zone_wue: NetZone '%s' not found", zone_name.c_str());
+    auto hosts = zone->get_all_hosts();
+    if (hosts.empty()) return -1;
+    return static_cast<long double>(sg_host_get_wue(hosts[0]));
+}
+
 unsigned int Machines::nb_machines() const
 {
     return static_cast<unsigned int>(_machines.size());
