@@ -388,71 +388,84 @@ private:
 };
 
 /**
- * @brief Traces the carbon footprint of the computation machines
+ * @brief Traces the environmental footprint of the computation machines
  */
- class EnvironmentalFootprintTracer
- {
- public:
-     /**
-      * @brief Constructs a EnvironmentalFootprintTracer
-      */
-     EnvironmentalFootprintTracer() = default;
- 
-     /**
-      * @brief EnvironmentalFootprintTracer cannot be copied.
-      * @param[in] other Another instance
-      */
-     EnvironmentalFootprintTracer(const EnvironmentalFootprintTracer & other) = delete;
- 
-     /**
-      * @brief Destroys a EnvironmentalFootprintTracer
-      * @details The output file is flushed and written
-      */
-     ~EnvironmentalFootprintTracer();
- 
-     /**
-      * @brief Sets the Batsim context
-      * @param[in] context The Batsim context
-      */
-     void set_context(BatsimContext * context);
- 
-     /**
-      * @brief Sets the output filename of the tracer
-      * @param[in] filename The name of the output file of the tracer
-      */
-     void set_filename(const std::string & filename);
- 
-     /**
-      * @brief Adds a zone-level environmental event to the tracer
-      * @param[in] date The simulation time of the event
-      * @param[in] zone_name The name of the NetZone the event applies to
-      * @param[in] event_type The string event type: "mix", "ci", or "wi"
-      */
-     void add_zone_event(double date, const std::string & zone_name, const std::string & event_type);
+class EnvironmentalFootprintTracer
+{
+public:
+    /**
+     * @brief Constructs a EnvironmentalFootprintTracer
+     */
+    EnvironmentalFootprintTracer() = default;
 
-     /**
-      * @brief Forces the flushing of what happened to the output file
-      */
-     void flush();
+    /**
+     * @brief EnvironmentalFootprintTracer cannot be copied.
+     * @param[in] other Another instance
+     */
+    EnvironmentalFootprintTracer(const EnvironmentalFootprintTracer & other) = delete;
 
-     /**
-      * @brief Closes the buffer and its associated output file
-      */
-     void close_buffer();
+    /**
+     * @brief Destroys a EnvironmentalFootprintTracer
+     * @details The output file is flushed and written
+     */
+    ~EnvironmentalFootprintTracer();
 
- private:
-     /**
-      * @brief Writes one CSV row for the given zone and event type
-      * @param[in] date The simulation time of the event
-      * @param[in] zone_name The name of the NetZone
-      * @param[in] event_type The string event type ("mix", "ci", "wi")
-      */
-     void add_entry(double date, const std::string & zone_name, const std::string & event_type);
+    /**
+     * @brief Sets the Batsim context
+     * @param[in] context The Batsim context
+     */
+    void set_context(BatsimContext * context);
 
- private:
-     BatsimContext * _context = nullptr; //!< The Batsim context
-     WriteBuffer * _wbuf = nullptr; //!< The buffer used to handle the output file
- };
+    /**
+     * @brief Sets the output filename of the tracer
+     * @param[in] filename The name of the output file of the tracer
+     */
+    void set_filename(const std::string & filename);
+
+    /**
+     * @brief Adds a job start event to the tracer
+     * @param[in] date The date at which the job has started
+     * @param[in] job_id The job identifier
+     */
+    void add_job_start(double date, JobIdentifier job_id);
+
+    /**
+     * @brief Adds a job end event to the tracer
+     * @param[in] date The date at which the job has ended
+     * @param[in] job_id The job identifier
+     */
+    void add_job_end(double date, JobIdentifier job_id);
+
+    /**
+     * @brief Adds a power state change event to the tracer
+     * @param[in] date The date at which the power state has changed
+     * @param[in] machines The machines whose power state has changed
+     * @param[in] new_pstate The new power state
+     */
+    void add_pstate_change(double date, const IntervalSet & machines, int new_pstate);
+
+    /**
+     * @brief Forces the flushing of what happened to the output file
+     */
+    void flush();
+
+    /**
+     * @brief Closes the buffer and its associated output file
+     */
+    void close_buffer();
+
+private:
+    /**
+     * @brief Writes one CSV row per compute zone for the given event type
+     * @param[in] date The simulation time of the event
+     * @param[in] event_type The event type: 's' (start), 'e' (end), 'p' (pstate)
+     */
+    void add_entry(double date, char event_type);
+
+private:
+    BatsimContext * _context = nullptr; //!< The Batsim context
+    WriteBuffer * _wbuf = nullptr; //!< The buffer used to handle the output file
+};
 
 
 /**

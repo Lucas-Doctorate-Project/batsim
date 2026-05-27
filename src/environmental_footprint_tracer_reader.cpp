@@ -65,12 +65,10 @@ void EnvironmentalTraceReader::read_trace(const std::string& filename)
             simgrid::s4u::Actor::create(
                 "env_zone_upd_" + zone_name,
                 hosts[0],
-                [ctx = _context, delay, hosts, zone_name, property_to_update, new_values_str]() {
+                [delay, hosts, property_to_update, new_values_str]() {
                     simgrid::s4u::this_actor::sleep_for(delay);
                     for (auto* h : hosts)
                         EnvironmentalTraceReader::apply_update(h, property_to_update, new_values_str);
-                    ctx->notify_environmental_change(
-                        simgrid::s4u::Engine::get_clock(), zone_name, property_to_update);
                 }
             );
 

@@ -902,12 +902,26 @@ void EnvironmentalFootprintTracer::set_filename(const string &filename)
     xbt_assert(_wbuf == nullptr, "Double call of EnvironmentalFootprintTracer::set_filename");
     _wbuf = new WriteBuffer(filename);
 
-    _wbuf->append_text("time,zone,carbon_footprint(gCO2e),water_footprint(L),event_type,carbon_intensity(gCO2e/kWh),water_intensity(L/kWh)\n");
+    _wbuf->append_text("time,zone,event_type,carbon_operational(gCO2e),carbon_embodied(gCO2e),carbon_total(gCO2e),water_onsite(L),water_offsite(L),water_embodied(L),water_total(L)\n");
 }
 
-void EnvironmentalFootprintTracer::add_zone_event(double date, const std::string & zone_name, const std::string & event_type)
+void EnvironmentalFootprintTracer::add_job_start(double date, JobIdentifier job_id)
 {
-    add_entry(date, zone_name, event_type);
+    (void) job_id;
+    add_entry(date, 's');
+}
+
+void EnvironmentalFootprintTracer::add_job_end(double date, JobIdentifier job_id)
+{
+    (void) job_id;
+    add_entry(date, 'e');
+}
+
+void EnvironmentalFootprintTracer::add_pstate_change(double date, const IntervalSet & machines, int new_pstate)
+{
+    (void) machines;
+    (void) new_pstate;
+    add_entry(date, 'p');
 }
 
 void EnvironmentalFootprintTracer::flush()
@@ -925,17 +939,11 @@ void EnvironmentalFootprintTracer::close_buffer()
     _wbuf = nullptr;
 }
 
-void EnvironmentalFootprintTracer::add_entry(double date, const std::string & zone_name, const std::string & event_type)
+void EnvironmentalFootprintTracer::add_entry(double date, char event_type)
 {
     xbt_assert(_wbuf != nullptr, "wrong call: _wbuf is null");
 
-    long double carbon_footprint = _context->machines.zone_carbon_footprint(_context, zone_name);
-    long double water_footprint  = _context->machines.zone_water_footprint(_context, zone_name);
-    long double carbon_intensity = _context->machines.zone_carbon_intensity(_context, zone_name);
-    long double water_intensity  = _context->machines.zone_water_intensity(_context, zone_name);
-    long double pue = _context->machines.zone_pue(_context, zone_name);
-    long double wue = _context->machines.zone_wue(_context, zone_name);
-
+    const std::vector<std::string> zone_names = _context->machines.compute_zone_names();
 
     const int buf_size = 512;
     int nb_printed;
@@ -943,26 +951,25 @@ void EnvironmentalFootprintTracer::add_entry(double date, const std::string & zo
     char * buf = static_cast<char*>(malloc(sizeof(char) * buf_size));
     xbt_assert(buf != NULL, "Couldn't allocate memory");
 
-    if (carbon_intensity >= 0 && water_intensity >= 0)
+    for (const std::string & zone_name : zone_names)
     {
-        nb_printed = snprintf(buf, buf_size, "%lf,%s,%Lf,%Lf,%s,%lf,%lf\n",
-                              date, zone_name.c_str(),
-                              carbon_footprint, water_footprint,
-                              event_type.c_str(),
-                              static_cast<double>(carbon_intensity),
-                              static_cast<double>(water_intensity));
+        long double carbon_operational = _context->machines.zone_carbon_operational(_context, zone_name);
+        long double carbon_embodied    = _context->machines.zone_carbon_embodied(_context, zone_name);
+        long double carbon_total       = _context->machines.zone_carbon_footprint(_context, zone_name);
+        long double water_onsite       = _context->machines.zone_water_onsite(_context, zone_name);
+        long double water_offsite      = _context->machines.zone_water_offsite(_context, zone_name);
+        long double water_embodied     = _context->machines.zone_water_embodied(_context, zone_name);
+        long double water_total        = _context->machines.zone_water_footprint(_context, zone_name);
+
+        nb_printed = snprintf(buf, buf_size, "%lf,%s,%c,%Lf,%Lf,%Lf,%Lf,%Lf,%Lf,%Lf\n",
+                              date, zone_name.c_str(), event_type,
+                              carbon_operational, carbon_embodied, carbon_total,
+                              water_onsite, water_offsite, water_embodied, water_total);
+        xbt_assert(nb_printed < buf_size - 1,
+                   "Writing error: buffer has been completely filled, some information might "
+                   "have been lost. Please increase Batsim's output temporary buffers' size");
+        _wbuf->append_text(buf);
     }
-    else
-    {
-        nb_printed = snprintf(buf, buf_size, "%lf,%s,%Lf,%Lf,%s,NA,NA\n",
-                              date, zone_name.c_str(),
-                              carbon_footprint, water_footprint,
-                              event_type.c_str());
-    }
-    xbt_assert(nb_printed < buf_size - 1,
-               "Writing error: buffer has been completely filled, some information might "
-               "have been lost. Please increase Batsim's output temporary buffers' size");
-    _wbuf->append_text(buf);
 
     free(buf);
 }

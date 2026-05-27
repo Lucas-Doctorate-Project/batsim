@@ -439,6 +439,12 @@ void server_on_pstate_modification(ServerData * data,
     data->context->current_switches.add_switch(message->machine_ids, message->new_pstate);
     data->context->energy_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(), message->machine_ids,
                                                    message->new_pstate);
+    if (data->context->environmental_footprint_used)
+    {
+        data->context->environmental_footprint_tracer.add_pstate_change(simgrid::s4u::Engine::get_clock(),
+                                                                         message->machine_ids,
+                                                                         message->new_pstate);
+    }
 
     // Let's quickly check whether this is a switchON or a switchOFF
     // Unknown transition states will be set to -42.

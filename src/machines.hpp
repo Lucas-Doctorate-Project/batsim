@@ -323,6 +323,68 @@ public:
     long double zone_water_intensity(const BatsimContext * context, const std::string & zone_name) const;
 
     /**
+     * @brief Returns the PUE of a NetZone (from its first host)
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The PUE, or -1 if environmental footprint is not enabled
+     */
+    long double zone_pue(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Returns the WUE of a NetZone (from its first host)
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The WUE, or -1 if environmental footprint is not enabled
+     */
+    long double zone_wue(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Sums operational carbon footprint over all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The operational carbon footprint (gCO2e), or -1 if disabled
+     */
+    long double zone_carbon_operational(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Sums embodied carbon footprint over all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The embodied carbon footprint (gCO2e), or -1 if disabled
+     */
+    long double zone_carbon_embodied(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Sums on-site water footprint over all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The on-site water footprint (L), or -1 if disabled
+     */
+    long double zone_water_onsite(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Sums off-site water footprint over all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The off-site water footprint (L), or -1 if disabled
+     */
+    long double zone_water_offsite(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Sums embodied water footprint over all hosts in a NetZone
+     * @param[in] context The Batsim context
+     * @param[in] zone_name The name of the NetZone
+     * @return The embodied water footprint (L), or -1 if disabled
+     */
+    long double zone_water_embodied(const BatsimContext * context, const std::string & zone_name) const;
+
+    /**
+     * @brief Returns the names of all distinct NetZones that contain at least one compute machine
+     * @return A sorted vector of unique zone name strings
+     */
+    std::vector<std::string> compute_zone_names() const;
+
+    /**
      * @brief Returns the total number of machines
      * @return The total number of machines
      */
