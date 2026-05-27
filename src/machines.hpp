@@ -277,20 +277,6 @@ public:
     long double total_water_footprint(const BatsimContext * context) const;
 
     /**
-     * @brief Returns the current carbon intensity (from the first machine, assuming shared grid)
-     * @param[in] context The Batsim context
-     * @return The carbon intensity in g CO2/kWh, or -1 if environmental footprint is not enabled
-     */
-    long double carbon_intensity(const BatsimContext * context) const;
-
-    /**
-     * @brief Returns the current water intensity (from the first machine, assuming shared grid)
-     * @param[in] context The Batsim context
-     * @return The water intensity in L/kWh, or -1 if environmental footprint is not enabled
-     */
-    long double water_intensity(const BatsimContext * context) const;
-
-    /**
      * @brief Computes and returns the total carbon footprint of all hosts in a NetZone
      * @param[in] context The Batsim context
      * @param[in] zone_name The name of the NetZone

@@ -197,24 +197,7 @@ void server_on_sched_tell_me_carbon_footprint(ServerData * data,
  * @param[in,out] task_data The data associated with the message the server received
  */
 void server_on_sched_tell_me_water_footprint(ServerData * data,
-                                             IPMessage * task_data);
-
-/**
- * @brief Server SCHED_TELL_ME_CARBON_INTENSITY handler
- * @param[in,out] data The data associated with the server_process
- * @param[in,out] task_data The data associated with the message the server received
- */
-void server_on_sched_tell_me_carbon_intensity(ServerData * data,
-                                              IPMessage * task_data);
-
-/**
- * @brief Server SCHED_TELL_ME_WATER_INTENSITY handler
- * @param[in,out] data The data associated with the server_process
- * @param[in,out] task_data The data associated with the message the server received
- */
-void server_on_sched_tell_me_water_intensity(ServerData * data,
-                                             IPMessage * task_data);
-
+                                                IPMessage * task_data); 
 /**
  * @brief Server WAIT_QUERY handler
  * @param[in,out] data The data associated with the server_process

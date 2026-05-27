@@ -186,22 +186,6 @@ public:
                                                double date) = 0;
 
     /**
-     * @brief Appends an ANSWER (carbon intensity) event.
-     * @param[in] carbon_intensity The current carbon intensity in g CO2/kWh.
-     * @param[in] date The event date. Must be greater than or equal to the previous event.
-     */
-    virtual void append_answer_carbon_intensity(double carbon_intensity,
-                                                double date) = 0;
-
-    /**
-     * @brief Appends an ANSWER (water intensity) event.
-     * @param[in] water_intensity The current water intensity in L/kWh.
-     * @param[in] date The event date. Must be greater than or equal to the previous event.
-     */
-    virtual void append_answer_water_intensity(double water_intensity,
-                                               double date) = 0;
-
-    /**
      * @brief Appends a NOTIFY event.
      * @param notify_type The type of the NOTIFY event
      * @param date The event date. Must be greater than or equal to the previous event date.
@@ -389,22 +373,6 @@ public:
      * @param[in] date The event date. Must be greater than or equal to the previous event.
      */
     void append_answer_water_footprint(double water_footprint,
-                                       double date);
-
-    /**
-     * @brief Appends an ANSWER (carbon intensity) event.
-     * @param[in] carbon_intensity The current carbon intensity in g CO2/kWh.
-     * @param[in] date The event date. Must be greater than or equal to the previous event.
-     */
-    void append_answer_carbon_intensity(double carbon_intensity,
-                                        double date);
-
-    /**
-     * @brief Appends an ANSWER (water intensity) event.
-     * @param[in] water_intensity The current water intensity in L/kWh.
-     * @param[in] date The event date. Must be greater than or equal to the previous event.
-     */
-    void append_answer_water_intensity(double water_intensity,
                                        double date);
 
     /**
@@ -654,6 +622,6 @@ private:
 private:
     //! Maps message types to their handler functions
     std::map<std::string, std::function<void(JsonProtocolReader*, int, double, const rapidjson::Value&)>> _type_to_handler_map;
-    std::vector<std::string> accepted_requests = {"consumed_energy", "carbon_footprint", "water_footprint", "carbon_intensity", "water_intensity"}; //!< The currently accepted requests for the QUERY_REQUEST message
+    std::vector<std::string> accepted_requests = {"consumed_energy", "carbon_footprint", "water_footprint"}; //!< The currently acceptes requests for the QUERY_REQUEST message
     BatsimContext * context = nullptr; //!< The BatsimContext
 };

@@ -61,8 +61,6 @@ void server_process(BatsimContext * context)
     handler_map[IPMessageType::SCHED_TELL_ME_ENERGY] = server_on_sched_tell_me_energy;
     handler_map[IPMessageType::SCHED_TELL_ME_CARBON_FOOTPRINT] = server_on_sched_tell_me_carbon_footprint;
     handler_map[IPMessageType::SCHED_TELL_ME_WATER_FOOTPRINT] = server_on_sched_tell_me_water_footprint;
-    handler_map[IPMessageType::SCHED_TELL_ME_CARBON_INTENSITY] = server_on_sched_tell_me_carbon_intensity;
-    handler_map[IPMessageType::SCHED_TELL_ME_WATER_INTENSITY] = server_on_sched_tell_me_water_intensity;
     handler_map[IPMessageType::SCHED_SET_JOB_METADATA] = server_on_set_job_metadata;
     handler_map[IPMessageType::SCHED_WAIT_ANSWER] = server_on_sched_wait_answer;
     handler_map[IPMessageType::WAIT_QUERY] = server_on_wait_query;
@@ -609,36 +607,6 @@ void server_on_sched_tell_me_water_footprint(ServerData * data,
     double total_water_footprint = static_cast<double>(data->context->machines.total_water_footprint(data->context));
 
     data->context->proto_writer->append_answer_water_footprint(total_water_footprint, simgrid::s4u::Engine::get_clock());
-}
-
-void server_on_sched_tell_me_carbon_intensity(ServerData * data,
-                                              IPMessage * task_data)
-{
-    (void) task_data;
-
-    xbt_assert(data->context->environmental_footprint_used,
-        "Received a request about the carbon intensity but "
-        "environmental footprint simulation is not enabled. "
-        "Try --help to enable it.");
-
-    double carbon_intensity = static_cast<double>(data->context->machines.carbon_intensity(data->context));
-
-    data->context->proto_writer->append_answer_carbon_intensity(carbon_intensity, simgrid::s4u::Engine::get_clock());
-}
-
-void server_on_sched_tell_me_water_intensity(ServerData * data,
-                                             IPMessage * task_data)
-{
-    (void) task_data;
-
-    xbt_assert(data->context->environmental_footprint_used,
-        "Received a request about the water intensity but "
-        "environmental footprint simulation is not enabled. "
-        "Try --help to enable it.");
-
-    double water_intensity = static_cast<double>(data->context->machines.water_intensity(data->context));
-
-    data->context->proto_writer->append_answer_water_intensity(water_intensity, simgrid::s4u::Engine::get_clock());
 }
 
 void server_on_wait_query(ServerData * data,
