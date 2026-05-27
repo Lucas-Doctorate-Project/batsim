@@ -11,12 +11,13 @@
 , werror ? false
 , doValgrindAnalysis ? false
 , debug ? true
-, useClang ? false
+, useClang ? builtins.elem builtins.currentSystem [ "x86_64-darwin" "aarch64-darwin" ]
 , simgrid ? kapack.simgrid-light.overrideAttrs(old: {
-    src = kapack.pkgs.fetchgit {
-      url = "https://github.com/saraiva03/simgrid.git";
-      rev = "0c74031fb28e770b128e42f44b63b8136c79c3bc"; 
-      sha256 = "CfFeTqPNOc6EwaHpdpXwd9BCU8GZadnNriiX7aozU18="; 
+    src = kapack.pkgs.fetchFromGitHub {
+      owner = "Lucas-Doctorate-Project";
+      repo = "simgrid";
+      rev = "03c7bd9c9492b5b38259f69adb1601964dcfd082";
+      hash = "sha256-wfBqUWLkbUIC4td8pFJ9oBsDGq1HSSMMLteotNy4hRI=";
     };
   })
 , batsched ? kapack.batsched.overrideAttrs (old: {
@@ -28,7 +29,11 @@
       sha256 = "SHFfYw+xRqMN+bTHAVk9Wli/2xaJBEpG50YonklYKIs=";
     };
   })
-, batexpe ? kapack.batexpe
+# `batexpe` was removed from nur-kapack pending a migration to buildGoModule
+# (commented out in nur.nix), so `kapack.batexpe` no longer evaluates. Use
+# `or null` so the file still evaluates; tests that need `robin` will skip
+# when it is absent.
+, batexpe ? kapack.batexpe or null
 , pybatsim ? kapack.pybatsim-320.overrideAttrs (old: {
     src = kapack.pkgs.fetchFromGitLab {
       domain = "gitlab.inria.fr";
@@ -147,9 +152,20 @@ let
         "^events/.*\.txt"
       ];
       buildInputs = with pkgs.python3Packages; [
-        batsim batsched batexpe pkgs.redis
+        batsim batsched pkgs.redis
         pybatsim pytest pytest-html pandas] ++
+      pkgs.lib.optional (batexpe != null) batexpe ++
       pkgs.lib.optional doValgrindAnalysis [ pkgs.valgrind ];
+
+      # On macOS the upstream batsched build leaves `libloguru.so` as a relative
+      # install name (see `otool -L $(which batsched)`), so dyld cannot resolve
+      # it at runtime. Expose loguru via DYLD_FALLBACK_LIBRARY_PATH for both
+      # `nix-shell -A integration_tests` and the in-derivation buildPhase.
+      shellHook = pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+        export DYLD_FALLBACK_LIBRARY_PATH=${kapack.loguru}/lib:$DYLD_FALLBACK_LIBRARY_PATH
+      '';
+      DYLD_FALLBACK_LIBRARY_PATH = pkgs.lib.optionalString pkgs.stdenv.isDarwin
+        "${kapack.loguru}/lib";
 
       pytestArgs = "-ra test/ --html=./report/pytest_report.html" +
         pkgs.lib.optionalString doValgrindAnalysis " --with-valgrind";
