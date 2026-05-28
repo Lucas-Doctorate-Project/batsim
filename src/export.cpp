@@ -77,7 +77,7 @@ void prepare_batsim_outputs(BatsimContext * context)
 
     if(context->environmental_footprint_used){
         context->environmental_footprint_tracer.set_context(context);
-        context->environmental_footprint_tracer.set_filename(context->export_prefix + "_carbon_footprint.csv");
+        context->environmental_footprint_tracer.set_filename(context->export_prefix + "_environmental_footprint.csv");
     }
 
     context->jobs_tracer.initialize(context,
@@ -1182,7 +1182,12 @@ void JobsTracer::finalize()
     if (_context->environmental_footprint_used)
     {
         output_map["total_carbon_footprint"] = to_string(static_cast<double>(_context->machines.total_carbon_footprint(_context)));
+        output_map["total_carbon_operational"] = to_string(static_cast<double>(_context->machines.total_carbon_operational(_context)));
+        output_map["total_carbon_embodied"] = to_string(static_cast<double>(_context->machines.total_carbon_embodied(_context)));
         output_map["total_water_footprint"] = to_string(static_cast<double>(_context->machines.total_water_footprint(_context)));
+        output_map["total_water_onsite"] = to_string(static_cast<double>(_context->machines.total_water_onsite(_context)));
+        output_map["total_water_offsite"] = to_string(static_cast<double>(_context->machines.total_water_offsite(_context)));
+        output_map["total_water_embodied"] = to_string(static_cast<double>(_context->machines.total_water_embodied(_context)));
     }
 
     output_map["nb_machine_switches"] = to_string(_context->nb_machine_switches);

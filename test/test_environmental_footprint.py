@@ -2,7 +2,7 @@
 '''Environmental footprint tests.
 
 Run Batsim with --environmental-footprint-dynamic and verify that
-*_carbon_footprint.csv uses the job/pstate-triggered, per-component schema:
+*_environmental_footprint.csv uses the job/pstate-triggered, per-component schema:
   - Has a "zone" column.
   - event_type values are single chars 's' (job start), 'e' (job end),
     or 'p' (pstate change) — mirroring EnergyConsumptionTracer.
@@ -101,7 +101,7 @@ def _run_sim(test_name, port):
 
 
 def _read_csv(output_dir):
-    csv_path = os.path.join(output_dir, 'batres_carbon_footprint.csv')
+    csv_path = os.path.join(output_dir, 'batres_environmental_footprint.csv')
     assert os.path.isfile(csv_path), f'Output file not found: {csv_path}'
     return pd.read_csv(csv_path), csv_path
 

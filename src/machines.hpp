@@ -277,6 +277,41 @@ public:
     long double total_water_footprint(const BatsimContext * context) const;
 
     /**
+     * @brief Computes and returns the total operational carbon footprint of all machines
+     * @param[in] context The Batsim context
+     * @return The total operational carbon footprint (gCO2e), or -1 if disabled
+     */
+    long double total_carbon_operational(const BatsimContext * context) const;
+
+    /**
+     * @brief Computes and returns the total embodied carbon footprint of all machines
+     * @param[in] context The Batsim context
+     * @return The total embodied carbon footprint (gCO2e), or -1 if disabled
+     */
+    long double total_carbon_embodied(const BatsimContext * context) const;
+
+    /**
+     * @brief Computes and returns the total on-site water footprint of all machines
+     * @param[in] context The Batsim context
+     * @return The total on-site water footprint (L), or -1 if disabled
+     */
+    long double total_water_onsite(const BatsimContext * context) const;
+
+    /**
+     * @brief Computes and returns the total off-site water footprint of all machines
+     * @param[in] context The Batsim context
+     * @return The total off-site water footprint (L), or -1 if disabled
+     */
+    long double total_water_offsite(const BatsimContext * context) const;
+
+    /**
+     * @brief Computes and returns the total embodied water footprint of all machines
+     * @param[in] context The Batsim context
+     * @return The total embodied water footprint (L), or -1 if disabled
+     */
+    long double total_water_embodied(const BatsimContext * context) const;
+
+    /**
      * @brief Computes and returns the total carbon footprint of all hosts in a NetZone
      * @param[in] context The Batsim context
      * @param[in] zone_name The name of the NetZone

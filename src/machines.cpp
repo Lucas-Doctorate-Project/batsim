@@ -500,6 +500,61 @@ long double Machines::total_water_footprint(const BatsimContext *context) const
     return total_water_footprint;
 }
 
+long double Machines::total_carbon_operational(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+
+    long double total = 0;
+    for (const Machine * m : _machines)
+        total += static_cast<long double>(sg_host_get_carbon_operational_footprint(m->host));
+    return total;
+}
+
+long double Machines::total_carbon_embodied(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+
+    long double total = 0;
+    for (const Machine * m : _machines)
+        total += static_cast<long double>(sg_host_get_carbon_embodied_footprint(m->host));
+    return total;
+}
+
+long double Machines::total_water_onsite(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+
+    long double total = 0;
+    for (const Machine * m : _machines)
+        total += static_cast<long double>(sg_host_get_water_onsite_footprint(m->host));
+    return total;
+}
+
+long double Machines::total_water_offsite(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+
+    long double total = 0;
+    for (const Machine * m : _machines)
+        total += static_cast<long double>(sg_host_get_water_offsite_footprint(m->host));
+    return total;
+}
+
+long double Machines::total_water_embodied(const BatsimContext *context) const
+{
+    if (!context->environmental_footprint_used)
+        return -1;
+
+    long double total = 0;
+    for (const Machine * m : _machines)
+        total += static_cast<long double>(sg_host_get_water_embodied_footprint(m->host));
+    return total;
+}
+
 
 static simgrid::s4u::NetZone* find_zone_by_name_machines(const std::string& name) {
     std::queue<simgrid::s4u::NetZone*> q;
