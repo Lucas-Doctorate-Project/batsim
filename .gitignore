@@ -21,3 +21,4 @@ dump.rdb
 result
 .tags*
 tags
+test-out/
