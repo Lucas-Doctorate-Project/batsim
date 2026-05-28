@@ -1,8 +1,11 @@
-timestamp,host_id,property_name,new_value
-0,"AS0","carbon_intensity","61.67"
-0,"AS0","water_intensity","1.5875"
-100,"AS0","carbon_intensity","41.5"
-100,"AS0","water_intensity","1.0801"
-100,"AS0","water_intensity","Nuclear:1.957;Fossil Gas:1.086;Solar:0.004"
-200,"AS0","carbon_intensity","29.18"
-200,"AS0","carbon_intensity","0.6397"
+timestamp,zone,property,value
+0,AS0,carbon_intensity,60.0
+0,AS0,water_intensity,1.5
+100,AS0,carbon_intensity,40.0
+100,AS0,water_intensity,1.0
+200,AS0,carbon_intensity,30.0
+200,AS0,water_intensity,0.7
+300,AS0,carbon_intensity,80.0
+300,AS0,water_intensity,2.0
+400,AS0,carbon_intensity,35.0
+400,AS0,water_intensity,0.9
