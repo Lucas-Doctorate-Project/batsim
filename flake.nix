@@ -38,6 +38,9 @@
             kapack = fixedKapack;
             doUnitTests = false;
             doCoverage = false;
+            # Release build: meson release (-O3, NDEBUG) and a stdenv without
+            # keepDebugInfo, instead of the default debug build.
+            debug = false;
             useClang = builtins.elem system [ "x86_64-darwin" "aarch64-darwin" ];
           };
         in {

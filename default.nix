@@ -19,6 +19,14 @@
       rev = "03c7bd9c9492b5b38259f69adb1601964dcfd082";
       hash = "sha256-wfBqUWLkbUIC4td8pFJ9oBsDGq1HSSMMLteotNy4hRI=";
     };
+    # Build SimGrid for maximum simulation speed. In SimGrid, -DNDEBUG (which
+    # disables the xbt_assert checks that run in the LMM solver / actor hot
+    # loops) is gated on `enable_debug`, NOT on CMAKE_BUILD_TYPE, so we must
+    # turn enable_debug off. Optimizations (-O3, LTO) are already on via the
+    # base derivation's enable_compile_optimizations / enable_lto.
+    cmakeBuildType = "Release";
+    cmakeFlags = (kapack.pkgs.lib.filter (f: f != "-Denable_debug=on") (old.cmakeFlags or []))
+      ++ [ "-Denable_debug=off" ];
   })
 , batsched ? kapack.batsched.overrideAttrs (old: {
     src = kapack.pkgs.fetchFromGitLab {
