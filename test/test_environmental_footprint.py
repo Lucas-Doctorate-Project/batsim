@@ -7,8 +7,10 @@ Run Batsim with --environmental-footprint-dynamic and verify that
   - event_type values are single chars 's' (job start), 'e' (job end),
     or 'p' (pstate change) — mirroring EnergyConsumptionTracer.
   - One row per zone per job/pstate event, NOT per environmental-trace update.
-  - Per-component footprint columns: operational/embodied for carbon,
-    onsite/offsite/embodied for water, plus per-component totals.
+  - Per-component footprint columns: operational/embodied for carbon
+    and onsite/offsite/embodied for water.
+  - Existing total fields are operational-only aliases, while embodied
+    values are fixed inventory reported separately.
 '''
 import json
 import os
@@ -30,6 +32,11 @@ EXPECTED_COLUMNS = [
     'carbon_operational(gCO2e)', 'carbon_embodied(gCO2e)', 'carbon_total(gCO2e)',
     'water_onsite(L)', 'water_offsite(L)', 'water_embodied(L)', 'water_total(L)',
 ]
+
+EMBODIED_CARBON_PER_HOST = 100.0
+EMBODIED_WATER_PER_HOST = 10.0
+ZONE_HOST_COUNT = 5
+COMPUTE_HOST_COUNT = 4
 
 
 def _kill_proc(proc):
@@ -106,6 +113,18 @@ def _read_csv(output_dir):
     return pd.read_csv(csv_path), csv_path
 
 
+def _read_schedule_csv(output_dir):
+    csv_path = os.path.join(output_dir, 'batres_schedule.csv')
+    assert os.path.isfile(csv_path), f'Output file not found: {csv_path}'
+    return pd.read_csv(csv_path), csv_path
+
+
+def _read_jobs_csv(output_dir):
+    csv_path = os.path.join(output_dir, 'batres_jobs.csv')
+    assert os.path.isfile(csv_path), f'Output file not found: {csv_path}'
+    return pd.read_csv(csv_path), csv_path
+
+
 def test_env_footprint_csv_schema():
     '''The carbon-footprint CSV must have the new per-component header and char event types.'''
     output_dir = _run_sim('env-footprint-schema', port=28000)
@@ -176,21 +195,49 @@ def test_env_footprint_per_zone_cumulative_monotonic():
                 f'Zone {zone}: column {col!r} decreased between rows.\n{group[["time","event_type",col]]}'
 
 
-def test_env_footprint_component_totals_consistent():
-    '''carbon_total ≈ operational + embodied; water_total ≈ onsite + offsite + embodied.'''
+def test_env_footprint_components_and_operational_aliases():
+    '''Embodied values are fixed inventory and existing total fields are operational-only aliases.'''
     output_dir = _run_sim('env-footprint-components', port=28004)
     df, _ = _read_csv(output_dir)
 
     tol = 1e-3
     carbon_diff = (df['carbon_total(gCO2e)']
-                   - df['carbon_operational(gCO2e)']
-                   - df['carbon_embodied(gCO2e)']).abs()
+                   - df['carbon_operational(gCO2e)']).abs()
     assert (carbon_diff < tol).all(), \
-        f'carbon_total != operational + embodied (max diff: {carbon_diff.max()})'
+        f'carbon_total is not an operational alias (max diff: {carbon_diff.max()})'
 
     water_diff = (df['water_total(L)']
                   - df['water_onsite(L)']
-                  - df['water_offsite(L)']
-                  - df['water_embodied(L)']).abs()
+                  - df['water_offsite(L)']).abs()
     assert (water_diff < tol).all(), \
-        f'water_total != onsite + offsite + embodied (max diff: {water_diff.max()})'
+        f'water_total is not an operational alias (max diff: {water_diff.max()})'
+
+    expected_zone_carbon = ZONE_HOST_COUNT * EMBODIED_CARBON_PER_HOST
+    expected_zone_water = ZONE_HOST_COUNT * EMBODIED_WATER_PER_HOST
+    assert ((df['carbon_embodied(gCO2e)'] - expected_zone_carbon).abs() < tol).all(), \
+        'Zone embodied carbon must be complete and constant from the first event'
+    assert ((df['water_embodied(L)'] - expected_zone_water).abs() < tol).all(), \
+        'Zone embodied water must be complete and constant from the first event'
+
+    first_row = df.loc[df['time'].idxmin()]
+    assert first_row['time'] < 1e-3, f'Expected a near-zero first event, got {first_row["time"]}'
+    assert abs(first_row['carbon_embodied(gCO2e)'] - expected_zone_carbon) < tol
+    assert abs(first_row['water_embodied(L)'] - expected_zone_water) < tol
+    assert abs(first_row['carbon_total(gCO2e)'] - first_row['carbon_operational(gCO2e)']) < tol
+    assert abs(first_row['water_total(L)'] - first_row['water_onsite(L)'] - first_row['water_offsite(L)']) < tol
+
+    schedule_df, _ = _read_schedule_csv(output_dir)
+    assert len(schedule_df) == 1, f'Expected one schedule summary row, got {len(schedule_df)}'
+    schedule = schedule_df.iloc[0]
+    expected_compute_carbon = COMPUTE_HOST_COUNT * EMBODIED_CARBON_PER_HOST
+    expected_compute_water = COMPUTE_HOST_COUNT * EMBODIED_WATER_PER_HOST
+    assert abs(schedule['total_carbon_embodied'] - expected_compute_carbon) < tol
+    assert abs(schedule['total_water_embodied'] - expected_compute_water) < tol
+    assert abs(schedule['total_carbon_footprint'] - schedule['total_carbon_operational']) < tol
+    assert abs(schedule['total_water_footprint'] - schedule['total_water_onsite'] - schedule['total_water_offsite']) < tol
+
+    jobs_df, _ = _read_jobs_csv(output_dir)
+    assert ((jobs_df['consumed_carbon'] - 0.005).abs() < 1e-6).all(), \
+        f'Per-job carbon must be operational-only:\n{jobs_df[["job_id", "consumed_carbon"]]}'
+    assert ((jobs_df['consumed_water'] - 0.000125).abs() < 1e-6).all(), \
+        f'Per-job water must be operational-only:\n{jobs_df[["job_id", "consumed_water"]]}'

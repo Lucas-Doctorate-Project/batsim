@@ -470,7 +470,7 @@ long double Machines::total_carbon_footprint(const BatsimContext *context) const
     {
         for (const Machine * m : _machines)
         {
-            total_carbon_footprint += static_cast<long double>(sg_host_get_carbon_footprint(m->host));
+            total_carbon_footprint += static_cast<long double>(sg_host_get_carbon_operational_footprint(m->host));
         }
     }
     else
@@ -489,7 +489,8 @@ long double Machines::total_water_footprint(const BatsimContext *context) const
     {
         for (const Machine * m : _machines)
         {
-            total_water_footprint += static_cast<long double>(sg_host_get_water_footprint(m->host));
+            total_water_footprint += static_cast<long double>(sg_host_get_water_onsite_footprint(m->host));
+            total_water_footprint += static_cast<long double>(sg_host_get_water_offsite_footprint(m->host));
         }
     }
     else
@@ -575,7 +576,7 @@ long double Machines::zone_carbon_footprint(const BatsimContext *context, const 
     xbt_assert(zone != nullptr, "zone_carbon_footprint: NetZone '%s' not found", zone_name.c_str());
     long double total = 0;
     for (auto* host : zone->get_all_hosts())
-        total += static_cast<long double>(sg_host_get_carbon_footprint(host));
+        total += static_cast<long double>(sg_host_get_carbon_operational_footprint(host));
     return total;
 }
 
@@ -587,7 +588,10 @@ long double Machines::zone_water_footprint(const BatsimContext *context, const s
     xbt_assert(zone != nullptr, "zone_water_footprint: NetZone '%s' not found", zone_name.c_str());
     long double total = 0;
     for (auto* host : zone->get_all_hosts())
-        total += static_cast<long double>(sg_host_get_water_footprint(host));
+    {
+        total += static_cast<long double>(sg_host_get_water_onsite_footprint(host));
+        total += static_cast<long double>(sg_host_get_water_offsite_footprint(host));
+    }
     return total;
 }
 
@@ -1108,7 +1112,7 @@ long double carbon_footprint_on_machines(BatsimContext * context,
     {
         int machine_id = *it;
         Machine * machine = context->machines[machine_id];
-        carbon_footprint += static_cast<long double>(sg_host_get_carbon_footprint(machine->host));
+        carbon_footprint += static_cast<long double>(sg_host_get_carbon_operational_footprint(machine->host));
     }
 
     return carbon_footprint;
@@ -1127,7 +1131,8 @@ long double water_footprint_on_machines(BatsimContext * context,
     {
         int machine_id = *it;
         Machine * machine = context->machines[machine_id];
-        water_footprint += static_cast<long double>(sg_host_get_water_footprint(machine->host));
+        water_footprint += static_cast<long double>(sg_host_get_water_onsite_footprint(machine->host));
+        water_footprint += static_cast<long double>(sg_host_get_water_offsite_footprint(machine->host));
     }
 
     return water_footprint;

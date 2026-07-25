@@ -589,9 +589,9 @@ void server_on_sched_tell_me_carbon_footprint(ServerData * data,
         "machines but environmental footprint simulation is not enabled. "
         "Try --help to enable it.");
 
-    double total_carbon_footprint = static_cast<double>(data->context->machines.total_carbon_footprint(data->context));
+    double total_operational_carbon = static_cast<double>(data->context->machines.total_carbon_footprint(data->context));
 
-    data->context->proto_writer->append_answer_carbon_footprint(total_carbon_footprint, simgrid::s4u::Engine::get_clock());
+    data->context->proto_writer->append_answer_carbon_footprint(total_operational_carbon, simgrid::s4u::Engine::get_clock());
 }
 
 void server_on_sched_tell_me_water_footprint(ServerData * data,
@@ -604,9 +604,9 @@ void server_on_sched_tell_me_water_footprint(ServerData * data,
         "machines but environmental footprint simulation is not enabled. "
         "Try --help to enable it.");
 
-    double total_water_footprint = static_cast<double>(data->context->machines.total_water_footprint(data->context));
+    double total_operational_water = static_cast<double>(data->context->machines.total_water_footprint(data->context));
 
-    data->context->proto_writer->append_answer_water_footprint(total_water_footprint, simgrid::s4u::Engine::get_clock());
+    data->context->proto_writer->append_answer_water_footprint(total_operational_water, simgrid::s4u::Engine::get_clock());
 }
 
 void server_on_wait_query(ServerData * data,

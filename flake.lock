@@ -87,11 +87,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782074725,
-        "narHash": "sha256-5mvIu9dw2gxGbvwnIIEmj+50ZC4LlLNXen8bc1x5JTU=",
+        "lastModified": 1784943028,
+        "narHash": "sha256-kOPeVPq21z0H3YeyIgHDf8TFsoirrrPiYkU1Xk3VxNI=",
         "owner": "Lucas-Doctorate-Project",
         "repo": "simgrid",
-        "rev": "618da389c89d8e66f7b89af3eec089c6e1bbff99",
+        "rev": "288b569340f79202e34d690438e0c411bce7a3d5",
         "type": "github"
       },
       "original": {

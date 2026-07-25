@@ -6,6 +6,8 @@
         <prop id="wattage_per_state" value="100:200" />
         <prop id="wattage_off" value="10" />
         <prop id="carbon_intensity" value="80.93"/>
+        <prop id="embodied_carbon" value="100"/>
+        <prop id="embodied_water" value="10"/>
     </host>
 
     <!-- The state 1 of Mercury is a sleep state.
@@ -17,6 +19,8 @@
         <prop id="wattage_off" value="9.75" />
         <prop id="sleep_pstates" value="1:2:3" />
         <prop id="carbon_intensity" value="43.15"/>
+        <prop id="embodied_carbon" value="100"/>
+        <prop id="embodied_water" value="10"/>
     </host>
 
     <host id="Venus" speed="100.0Mf, 1e-9Mf, 0.5f, 0.05f" pstate="0" >
@@ -24,6 +28,8 @@
         <prop id="wattage_off" value="9.75" />
         <prop id="sleep_pstates" value="1:2:3" />
         <prop id="carbon_intensity" value="32.7"/>
+        <prop id="embodied_carbon" value="100"/>
+        <prop id="embodied_water" value="10"/>
     </host>
 
     <host id="Earth" speed="100.0Mf, 1e-9Mf, 0.5f, 0.05f" pstate="0" >
@@ -31,6 +37,8 @@
         <prop id="wattage_off" value="9.75" />
         <prop id="sleep_pstates" value="1:2:3" />
         <prop id="carbon_intensity" value="29.18"/>
+        <prop id="embodied_carbon" value="100"/>
+        <prop id="embodied_water" value="10"/>
     </host>
 
     <host id="Mars" speed="100.0Mf, 1e-9Mf, 0.5f, 0.05f" pstate="0" >
@@ -38,6 +46,8 @@
         <prop id="wattage_off" value="9.75" />
         <prop id="sleep_pstates" value="1:2:3" />
         <prop id="carbon_intensity" value="51.86"/>
+        <prop id="embodied_carbon" value="100"/>
+        <prop id="embodied_water" value="10"/>
     </host>
 
     <link id="6" bandwidth="41.279125MBps" latency="59.904us"/>
