@@ -1,6 +1,6 @@
 # Environmental Trace CSV Format
 
-This document describes the standard format for environmental trace CSV files used in Batsim/SimGrid to simulate dynamic energy grids and environmental impacts based on the component model (Off-site, On-site, and Embodied).
+This document describes the standard format for environmental trace CSV files used in Batsim/SimGrid to simulate dynamic energy grids and operational environmental impacts. Embodied carbon and water are fixed host inventory values configured separately in the SimGrid platform file.
 
 ## Format Overview
 
@@ -17,6 +17,8 @@ The CSV file must contain the following columns, strictly in this order:
 
 The trace directly feeds consolidated intensities and infrastructure metrics to the simulation, avoiding complex string parsing at runtime.
 
+The trace API intentionally supports only `carbon_intensity`, `water_intensity`, `pue`, and `wue`. SimGrid's embodied-footprint replacement setters are not exposed through this format.
+
 | Property Name | Description | Value Format Example |
 | :--- | :--- | :--- |
 | `carbon_intensity` | Updates the consolidated **off-site** Carbon intensity of the grid (gCO₂eq/kWh). | `500.0` |
@@ -28,8 +30,12 @@ The trace directly feeds consolidated intensities and infrastructure metrics to 
 
 * **Delimiter:** Comma (`,`).
 * **Ordering:** Rows must be strictly ordered chronologically by the `timestamp`.
-* **Update Behavior:** * When updating any property, the new value immediately **overwrites** the previous one.
-    * The environmental footprint plugin automatically calculates the incremental accumulation using the *old* value for the elapsed time interval, before applying the *new* value for future calculations.
+* **Update Behavior:**
+    * When updating any supported property, the new value immediately **overwrites** the previous one.
+    * The environmental footprint plugin calculates operational accumulation using the *old* value for the elapsed time interval before applying the *new* value to future calculations.
+    * Embodied carbon and water are complete fixed inventory values from simulation time zero. They are reported separately and are never temporally accumulated by Batsim.
+    * The `host_lifetime` platform property is unsupported by the current plugin and has no effect.
+    * Existing general carbon and water footprint fields and scheduler queries are operational-only compatibility aliases. Per-job `consumed_carbon` and `consumed_water` values are also operational-only.
 * **Units:**
     * Energy is handled internally in Joules and converted to kWh to apply the intensities.
     * Carbon is expressed in grams (g).

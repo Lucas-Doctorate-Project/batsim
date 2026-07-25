@@ -170,16 +170,16 @@ public:
                                       double date) = 0;
 
     /**
-     * @brief Appends an ANSWER (carbon footprint) event.
-     * @param[in] carbon_footprint The total carbon footprint in grams of CO2 equivalent.
+     * @brief Appends an ANSWER (operational carbon footprint) event.
+     * @param[in] carbon_footprint The accumulated operational carbon footprint in grams of CO2 equivalent. The protocol key is retained for compatibility and excludes embodied inventory.
      * @param[in] date The event date. Must be greater than or equal to the previous event.
      */
     virtual void append_answer_carbon_footprint(double carbon_footprint,
                                                double date) = 0;
 
     /**
-     * @brief Appends an ANSWER (water footprint) event.
-     * @param[in] water_footprint The total water footprint in liters.
+     * @brief Appends an ANSWER (operational water footprint) event.
+     * @param[in] water_footprint The accumulated on-site plus off-site operational water footprint in liters. The protocol key is retained for compatibility and excludes embodied inventory.
      * @param[in] date The event date. Must be greater than or equal to the previous event.
      */
     virtual void append_answer_water_footprint(double water_footprint,

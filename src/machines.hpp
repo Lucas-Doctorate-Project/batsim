@@ -263,16 +263,16 @@ public:
     long double total_wattmin(const BatsimContext * context) const;
 
      /**
-     * @brief Computes and returns the total carbon emissions of all the computing machines
+     * @brief Computes and returns the accumulated operational carbon emissions of all computing machines
      * @param[in] context The Batsim context
-     * @return The total consumed carbon emissions of all the computing machines
+     * @return The operational carbon footprint (gCO2e), or -1 if disabled. The existing total name is retained as a compatibility alias and excludes embodied inventory.
      */
     long double total_carbon_footprint(const BatsimContext * context) const;    
 
     /**
-     * @brief Computes and returns the total water footprint of all the computing machines
+     * @brief Computes and returns the accumulated operational water footprint of all computing machines
      * @param[in] context The Batsim context
-     * @return The total consumed water footprint of all the computing machines
+     * @return The on-site plus off-site operational water footprint (L), or -1 if disabled. The existing total name is retained as a compatibility alias and excludes embodied inventory.
      */
     long double total_water_footprint(const BatsimContext * context) const;
 
@@ -312,18 +312,18 @@ public:
     long double total_water_embodied(const BatsimContext * context) const;
 
     /**
-     * @brief Computes and returns the total carbon footprint of all hosts in a NetZone
+     * @brief Computes and returns the operational carbon footprint of all hosts in a NetZone
      * @param[in] context The Batsim context
      * @param[in] zone_name The name of the NetZone
-     * @return The carbon footprint (gCO2e), or -1 if environmental footprint is not enabled
+     * @return The operational carbon footprint (gCO2e), or -1 if environmental footprint is not enabled
      */
     long double zone_carbon_footprint(const BatsimContext * context, const std::string & zone_name) const;
 
     /**
-     * @brief Computes and returns the total water footprint of all hosts in a NetZone
+     * @brief Computes and returns the operational water footprint of all hosts in a NetZone
      * @param[in] context The Batsim context
      * @param[in] zone_name The name of the NetZone
-     * @return The water footprint (L), or -1 if environmental footprint is not enabled
+     * @return The on-site plus off-site operational water footprint (L), or -1 if environmental footprint is not enabled
      */
     long double zone_water_footprint(const BatsimContext * context, const std::string & zone_name) const;
 
@@ -480,19 +480,19 @@ long double consumed_energy_on_machines(BatsimContext * context,
                                         const IntervalSet & machines);
 
 /**
- * @brief Computes the carbon footprint accumulated on some machines since time 0
+ * @brief Computes the operational carbon footprint accumulated on some machines since time 0
  * @param[in] context The BatsimContext
  * @param[in] machines The machines whose footprint must be computed
- * @return The carbon footprint (in gCO2e) accumulated on the machines since time 0
+ * @return The operational carbon footprint (in gCO2e) accumulated on the machines since time 0
  */
 long double carbon_footprint_on_machines(BatsimContext * context,
                                          const IntervalSet & machines);
 
 /**
- * @brief Computes the water footprint accumulated on some machines since time 0
+ * @brief Computes the operational water footprint accumulated on some machines since time 0
  * @param[in] context The BatsimContext
  * @param[in] machines The machines whose footprint must be computed
- * @return The water footprint (in liters) accumulated on the machines since time 0
+ * @return The on-site plus off-site operational water footprint (in liters) accumulated on the machines since time 0
  */
 long double water_footprint_on_machines(BatsimContext * context,
                                         const IntervalSet & machines);

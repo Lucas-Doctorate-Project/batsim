@@ -902,6 +902,7 @@ void EnvironmentalFootprintTracer::set_filename(const string &filename)
     xbt_assert(_wbuf == nullptr, "Double call of EnvironmentalFootprintTracer::set_filename");
     _wbuf = new WriteBuffer(filename);
 
+    // carbon_total and water_total are retained as operational-only compatibility aliases. Embodied inventory is reported separately.
     _wbuf->append_text("time,zone,event_type,carbon_operational(gCO2e),carbon_embodied(gCO2e),carbon_total(gCO2e),water_onsite(L),water_offsite(L),water_embodied(L),water_total(L)\n");
 }
 
@@ -1181,6 +1182,7 @@ void JobsTracer::finalize()
 
     if (_context->environmental_footprint_used)
     {
+        // The total footprint fields are retained as operational-only compatibility aliases. Embodied inventory is reported separately.
         output_map["total_carbon_footprint"] = to_string(static_cast<double>(_context->machines.total_carbon_footprint(_context)));
         output_map["total_carbon_operational"] = to_string(static_cast<double>(_context->machines.total_carbon_operational(_context)));
         output_map["total_carbon_embodied"] = to_string(static_cast<double>(_context->machines.total_carbon_embodied(_context)));

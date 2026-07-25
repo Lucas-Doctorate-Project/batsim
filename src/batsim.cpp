@@ -254,9 +254,9 @@ Workflow options:
 
 Other options:
   --environmental-footprint          Enables the SimGrid environmental footprint plugin and outputs
-                                     the environmental footprint of the simulation. Data input is fixed as defined from platform files.
+                                     accumulated operational impacts and separate fixed embodied inventory from the platform file.
   --environmental-footprint-dynamic <trace_file>  Enables the SimGrid environmental footprint plugin.
-                                     The trace file contains changes in the energy grid and/or the carbon/water footprint for each host and timestamp. [default: None].
+                                     The trace file updates carbon intensity, water intensity, PUE, and WUE. Fixed embodied inventory remains defined by the platform file. [default: None].
   --dump-execution-context           Does not run the actual simulation but dumps the execution
                                      context on stdout (formatted as a JSON object).
   --enable-compute-sharing           Enables compute resource sharing:

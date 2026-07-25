@@ -20,7 +20,7 @@ struct BatsimContext;
 class EnvironmentalTraceReader {
 public:
     /**
-     * @brief Constructor. Opens the file and schedules all events immediately.
+     * @brief Constructor. Opens the file and schedules carbon intensity, water intensity, PUE, and WUE update events immediately. Fixed embodied inventory is configured through the platform and cannot be replaced through this trace API.
      * @param filename Path to the CSV trace file.
      * @param context  The Batsim context used to notify environmental changes.
      */

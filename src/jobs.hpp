@@ -231,8 +231,8 @@ struct Job
     long double runtime; //!< The amount of time during which the job has been executed.
     bool kill_requested = false; //!< Whether the job kill has been requested
     long double consumed_energy; //!< The sum, for all machine on which the job has been allocated, of the consumed energy (in Joules) during the job execution time (consumed_energy_after_job_completion - consumed_energy_before_job_start)
-    long double consumed_carbon = 0; //!< The carbon footprint (in gCO2e) accumulated on allocated machines during job execution
-    long double consumed_water = 0;  //!< The water footprint (in liters) accumulated on allocated machines during job execution
+    long double consumed_carbon = 0; //!< The operational carbon footprint (in gCO2e) accumulated on allocated machines during job execution. Embodied inventory is excluded.
+    long double consumed_water = 0;  //!< The on-site plus off-site operational water footprint (in liters) accumulated on allocated machines during job execution. Embodied inventory is excluded.
 
     // User inputs
     ProfilePtr profile; //!< A pointer to the job profile. The profile tells how the job should be computed
